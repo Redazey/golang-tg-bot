@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+    tgssnPg:
+        image: postgres:latest
+        container_name: tgssnPG
+        environment:
+            - POSTGRES_USER=backend!
+            - POSTGRES_PASSWORD=backend1q!
+            - POSTGRES_DB=tgssnPG
+        ports:
+            - "5432:5432"
+
+    tgssnRedis:
+        image: redis
+        container_name: tgssnRedis
+        environment:
+            - REDIS_PASSWORD=backend!
+        ports:
+            - "6379:6379"
+
+    bot:
+        container_name: tgssnbot
+        restart: unless-stopped
+        build:
+            target: dev
+            network: host
+        volumes:
+            - .:/app
