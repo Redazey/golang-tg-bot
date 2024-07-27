@@ -3,8 +3,8 @@ package messages
 import (
 	"context"
 	"fmt"
+	"strings"
 	"tgssn/pkg/logger"
-	"time"
 
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
@@ -17,28 +17,27 @@ import (
 // MessageSender Интерфейс для работы с сообщениями.
 type MessageSender interface {
 	SendMessage(text string, userID int64) error
-	ShowInlineButtons(msgText string, buttons types.TgRowButtons, userID int64) error
+	ShowInlineButtons(text string, buttons []types.TgRowButtons, userID int64) (int, error)
+	EditInlineButtons(text string, msgID int, buttons []types.TgRowButtons, userID int64) error
+	ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) error
 }
 
 // UserDataStorage Интерфейс для работы с хранилищем данных.
 type UserDataStorage interface {
-	InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord, userName string, limitPeriod time.Time) (bool, error)
-	SetUserCurrency(ctx context.Context, userID int64, currencyName string, userName string) error
-	GetShopCategories(ctx context.Context, userID int64) ([]string, error)
-	GetUserLimit(ctx context.Context, userID int64) (int64, error)
-	SetUserLimit(ctx context.Context, userID int64, limits int64, userName string) error
+	CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error)
+	InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord) (bool, error)
+	AddUserLimit(ctx context.Context, userID int64, limits float64, userName string) error
+	GetUserLimit(ctx context.Context, userID int64) (float64, error)
 	//----mock
-	GetUserBalance(ctx context.Context, userID int64) (float64, error)
 	GetUserOrdersCount(ctx context.Context, userID int64) (int64, error)
 }
 
 // Model Модель бота (клиент, хранилище, последние команды пользователя)
 type Model struct {
 	ctx             context.Context
-	tgClient        MessageSender    // Клиент.
-	storage         UserDataStorage  // Хранилище пользовательской информации.
-	lastUserCat     map[int64]string // Последняя выбранная пользователем категория.
-	lastUserCommand map[int64]string // Последняя выбранная пользователем команда.
+	tgClient        MessageSender   // Клиент.
+	storage         UserDataStorage // Хранилище пользовательской информации.
+	lastInlineKbMsg map[int64]int
 }
 
 // New Генерация сущности для хранения клиента ТГ и хранилища пользователей
@@ -47,8 +46,7 @@ func New(ctx context.Context, tgClient MessageSender, storage UserDataStorage) *
 		ctx:             ctx,
 		tgClient:        tgClient,
 		storage:         storage,
-		lastUserCat:     map[int64]string{},
-		lastUserCommand: map[int64]string{},
+		lastInlineKbMsg: map[int64]int{},
 	}
 }
 
@@ -76,27 +74,12 @@ func (s *Model) IncomingMessage(msg Message) error {
 	s.ctx = ctx
 	defer span.Finish()
 
-	//lastUserCat := s.lastUserCat[msg.UserID]
-	//lastUserCommand := s.lastUserCommand[msg.UserID]
-
-	// Обнуление выбранной категории и команды.
-	s.lastUserCat[msg.UserID] = ""
-	s.lastUserCommand[msg.UserID] = ""
-
 	// Распознавание стандартных команд.
 	if isNeedReturn, err := checkBotCommands(s, msg); err != nil || isNeedReturn {
 		return err
 	}
 
-	if isNeedReturn, err := categoriesBtn(s, msg); err != nil || isNeedReturn {
-		return err
-	}
-
-	if isNeedReturn, err := profileBtn(s, msg); err != nil || isNeedReturn {
-		return err
-	}
-
-	if isNeedReturn, err := supportBtn(s, msg); err != nil || isNeedReturn {
+	if isNeedReturn, err := callbacksCommands(s, msg); err != nil || isNeedReturn {
 		return err
 	}
 
@@ -105,10 +88,6 @@ func (s *Model) IncomingMessage(msg Message) error {
 }
 
 // Область "Внешний интерфейс": конец.
-
-// Область "Служебные функции": начало.
-
-// Область "Распознавание входящих команд": начало.
 
 // Распознавание стандартных команд бота.
 func checkBotCommands(s *Model, msg Message) (bool, error) {
@@ -123,63 +102,40 @@ func checkBotCommands(s *Model, msg Message) (bool, error) {
 			displayName = msg.UserName
 		}
 
-		return true, s.tgClient.ShowInlineButtons(fmt.Sprintf(TxtStart, displayName), BtnStart, msg.UserID)
-	case "/help":
-		return true, s.tgClient.SendMessage(TxtHelp, msg.UserID)
-	}
+		if err := s.tgClient.ShowKeyboardButtons(fmt.Sprintf(TxtStart, displayName), BtnStart, msg.UserID); err != nil {
+			return false, err
+		}
 
-	// Команда не распознана.
-	return false, nil
-}
-
-func categoriesBtn(s *Model, msg Message) (bool, error) {
-	span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkBotCommands")
-	s.ctx = ctx
-	defer span.Finish()
-
-	switch msg.Text {
+		return true, nil
 	case "Categories":
-		return true, s.tgClient.ShowInlineButtons(TxtCtgs, BtnCtgs, msg.UserID)
-	case "/help":
-		return true, s.tgClient.SendMessage(TxtHelp, msg.UserID)
-	}
-
-	// Команда не распознана.
-	return false, nil
-}
-
-func profileBtn(s *Model, msg Message) (bool, error) {
-	span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkBotCommands")
-	s.ctx = ctx
-	defer span.Finish()
-
-	switch msg.Text {
-	case "Profile":
-		balance, err := s.storage.GetUserBalance(ctx, msg.UserID)
+		lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, BtnCtgs, msg.UserID)
 		if err != nil {
 			return false, err
 		}
+		s.lastInlineKbMsg[msg.UserID] = lastMsgID
+		return true, nil
+	case "Profile":
+		balance, err := s.storage.GetUserLimit(ctx, msg.UserID)
+		if err != nil {
+			return false, err
+		}
+
 		orders, err := s.storage.GetUserOrdersCount(ctx, msg.UserID)
 		if err != nil {
 			return false, err
 		}
 
-		s.tgClient.SendMessage(fmt.Sprintf(TxtProfile, msg.UserID, balance, orders), msg.UserID)
+		lastMsgID, err := s.tgClient.ShowInlineButtons(
+			fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
+			BtnProfile,
+			msg.UserID,
+		)
+		if err != nil {
+			return false, err
+		}
+		s.lastInlineKbMsg[msg.UserID] = lastMsgID
+
 		return true, nil
-	case "/help":
-		return true, s.tgClient.SendMessage(TxtHelp, msg.UserID)
-	}
-
-	// Команда не распознана.
-	return false, nil
-}
-
-func supportBtn(s *Model, msg Message) (bool, error) {
-	span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkBotCommands")
-	s.ctx = ctx
-	defer span.Finish()
-
-	switch msg.Text {
 	case "Support":
 		s.tgClient.SendMessage(TxtSup, msg.UserID)
 		return true, nil
@@ -191,8 +147,53 @@ func supportBtn(s *Model, msg Message) (bool, error) {
 	return false, nil
 }
 
+// callbacks
+func callbacksCommands(s *Model, msg Message) (bool, error) {
+	if msg.IsCallback {
+		span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkIfCoiceCurrency")
+		s.ctx = ctx
+		defer span.Finish()
+
+		if strings.Contains(msg.Text, "back") {
+			lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, BtnCtgs, msg.UserID)
+			if err != nil {
+				return false, err
+			}
+			s.lastInlineKbMsg[msg.UserID] = lastMsgID
+			return true, nil
+
+		} else if strings.Contains(msg.Text, "CR") {
+			return true, s.tgClient.EditInlineButtons(
+				fmt.Sprintf(TxtReports, "Experian", TxtCRDesc),
+				s.lastInlineKbMsg[msg.UserID],
+				BtnCR,
+				msg.UserID,
+			)
+
+		} else if strings.Contains(msg.Text, "TU") {
+			return true, s.tgClient.EditInlineButtons(
+				fmt.Sprintf(TxtReports, "Trans union", TxtTUDesc),
+				s.lastInlineKbMsg[msg.UserID],
+				BtnTU,
+				msg.UserID,
+			)
+
+		} else if strings.Contains(msg.Text, "fullz") {
+			return true, s.tgClient.EditInlineButtons(
+				fmt.Sprintf(TxtReports, "Ready fulls", TxtFullzDesc),
+				s.lastInlineKbMsg[msg.UserID],
+				BtnFullz,
+				msg.UserID,
+			)
+		}
+	}
+
+	// Команда не распознана.
+	return false, nil
+}
+
 // Получение бюджета пользователя.
-func getUserLimit(s *Model, userID int64) (int64, error) {
+func getUserLimit(s *Model, userID int64) (float64, error) {
 	userLimit, err := s.storage.GetUserLimit(s.ctx, userID)
 	if err != nil {
 		logger.Error("Ошибка получения бюджета", zap.Error(err))

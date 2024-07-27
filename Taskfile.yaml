@@ -1,0 +1,34 @@
+# ./Taskfile.yaml
+# See: https://taskfile.dev/api/  
+
+version: "3"  
+
+tasks:  
+    default: # Если не указать конкретную команду, будут выполнены дефолтные
+        cmds:  
+        - task: build
+    test:
+        cmds:
+        - cd backend && CGO_ENABLED=1 go test -race -count 1 ./...
+
+    cover:
+        cmds:
+        - CGO_ENABLED=1 go test -short -race -count 1 -coverprofile=coverage.out ./...
+        - go tool cover -html=coverage.out
+        - cmd /c rmdir /s /q coverage.out
+
+    build:
+        cmds:
+        - cd build && cmd /c del *
+
+        - set GOOS=windows
+        - set GOARCH=amd64
+        - set CGO_ENABLED=0
+
+        - go build -o tgssn_amd64.exe ./cmd/main/main.go
+
+    migrator:
+        cmds:
+        - go run cmd/migrator/main.go --migrations-path=./migrations
+
+      

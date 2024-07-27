@@ -4,11 +4,9 @@ package db
 
 import (
 	"context"
-	"time"
 
 	types "tgssn/internal/model/bottypes"
 	"tgssn/internal/utils/dbutils"
-	"tgssn/internal/utils/timeutils"
 	"tgssn/pkg/errors"
 
 	"github.com/jmoiron/sqlx"
@@ -33,29 +31,21 @@ func NewUserStorage(db *sqlx.DB) *UserStorage {
 	}
 }
 
-func (storage *UserStorage) GetUserBalance(ctx context.Context, userID int64) (float64, error) {
-	return 228.666, nil
-}
-
 func (storage *UserStorage) GetUserOrdersCount(ctx context.Context, userID int64) (int64, error) {
 	return 6969, nil
 }
 
-func (storage *UserStorage) GetShopCategories(ctx context.Context, userID int64) ([]string, error) {
-	mock := []string{"", ""}
-	return mock, nil
-}
-
 // InsertUser Добавление пользователя в базу данных.
-func (storage *UserStorage) InsertUser(ctx context.Context, userID int64, userName string) error {
+func (storage *UserStorage) InsertUser(ctx context.Context, userID int64) error {
 	// Запрос на добавление данных.
 	const sqlString = `
-		INSERT INTO users (tg_id, name)
-			VALUES ($1, $2)
-			 ON CONFLICT (tg_id) DO NOTHING;`
+		INSERT INTO users (tg_id, limits)
+		VALUES ($1, 0)
+		ON CONFLICT (tg_id) DO NOTHING;
+	`
 
 	// Выполнение запроса на добавление данных.
-	if _, err := dbutils.Exec(ctx, storage.db, sqlString, userID, userName); err != nil {
+	if _, err := dbutils.Exec(ctx, storage.db, sqlString, userID); err != nil {
 		return err
 	}
 	return nil
@@ -83,14 +73,14 @@ func (storage *UserStorage) CheckIfUserExist(ctx context.Context, userID int64) 
 }
 
 // CheckIfUserExistAndAdd Проверка существования пользователя в базе данных добавление, если не существует.
-func (storage *UserStorage) CheckIfUserExistAndAdd(ctx context.Context, userID int64, userName string) (bool, error) {
+func (storage *UserStorage) CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error) {
 	exist, err := storage.CheckIfUserExist(ctx, userID)
 	if err != nil {
 		return false, err
 	}
 	if !exist {
 		// Добавление пользователя в базу, если не существует.
-		err := storage.InsertUser(ctx, userID, userName)
+		err := storage.InsertUser(ctx, userID)
 		if err != nil {
 			return false, err
 		}
@@ -99,20 +89,20 @@ func (storage *UserStorage) CheckIfUserExistAndAdd(ctx context.Context, userID i
 }
 
 // InsertUserDataRecord Добавление записи о расходах пользователя (в транзакции с проверкой превышения лимита).
-func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord, userName string, limitPeriod time.Time) (bool, error) {
+func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord) (bool, error) {
 	// Проверка существования пользователя в БД.
-	_, err := storage.CheckIfUserExistAndAdd(ctx, userID, userName)
+	_, err := storage.CheckIfUserExistAndAdd(ctx, userID)
 	if err != nil {
 		return false, err
 	}
 
 	// Проверка, что не превышен лимит расходов.
-	isOverLimit, err := checkIfUserOverLimit(ctx, storage.db, userID, limitPeriod)
+	limit, err := storage.GetUserLimit(ctx, userID)
 	if err != nil {
 		return false, err
 	}
-	if isOverLimit {
-		return true, nil
+	if limit < rec.Sum {
+		return false, nil
 	}
 
 	// Запуск транзакции.
@@ -120,35 +110,15 @@ func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int
 		// Функция, выполняемая внутри транзакции.
 		// Если функция вернет ошибку, произойдет откат транзакции.
 		func(tx *sqlx.Tx) error {
-			isOverLimit, err = insertUserDataRecordTx(ctx, tx, userID, rec, limitPeriod)
+			err = insertUserDataRecordTx(ctx, tx, userID, rec)
 			return err
 		})
 
-	// Функция возвращает признак isOverLimit:
-	// - true - запись не добавлена из-за превышения лимита,
-	// - false - запись добавлена (при err == nil).
-	return isOverLimit, err
-}
-
-// SetUserCurrency Сохранение выбранной валюты пользователя.
-func (storage *UserStorage) SetUserCurrency(ctx context.Context, userID int64, currencyName string, userName string) error {
-	// Проверка существования пользователя в БД.
-	_, err := storage.CheckIfUserExistAndAdd(ctx, userID, userName)
-	if err != nil {
-		return err
-	}
-	// Запрос на обновление данных.
-	const sqlString = `UPDATE users SET currency = $1 WHERE tg_id = $2;`
-
-	// Выполнение запроса на обновление данных.
-	if _, err := dbutils.Exec(ctx, storage.db, sqlString, currencyName, userID); err != nil {
-		return err
-	}
-	return nil
+	return true, err
 }
 
 // GetUserLimit Получение бюджета пользователя.
-func (storage *UserStorage) GetUserLimit(ctx context.Context, userID int64) (int64, error) {
+func (storage *UserStorage) GetUserLimit(ctx context.Context, userID int64) (float64, error) {
 	// Получение бюджета по пользователю.
 	const sqlString = `SELECT limits FROM users WHERE tg_id = $1;`
 
@@ -158,22 +128,23 @@ func (storage *UserStorage) GetUserLimit(ctx context.Context, userID int64) (int
 		return 0, errors.Wrap(err, "Get user limits error")
 	}
 	// Приведение результата запроса к нужному типу.
-	limits, ok := result["limits"].(int64)
+	limits, ok := result["limits"].(float64)
 	if !ok {
 		return 0, errors.New("Ошибка приведения типа результата запроса.")
 	}
 	return limits, nil
 }
 
-// SetUserLimit Сохранение бюджета пользователя.
-func (storage *UserStorage) SetUserLimit(ctx context.Context, userID int64, limits int64, userName string) error {
+func (storage *UserStorage) AddUserLimit(ctx context.Context, userID int64, limits float64, userName string) error {
 	// Проверка существования пользователя в БД.
-	_, err := storage.CheckIfUserExistAndAdd(ctx, userID, userName)
+	_, err := storage.CheckIfUserExistAndAdd(ctx, userID)
 	if err != nil {
 		return err
 	}
 	// Запрос на обновление данных.
-	const sqlString = `UPDATE users SET limits = $1 WHERE tg_id = $2;`
+	const sqlString = `UPDATE users 
+					   SET limits = limits + $1 
+					   WHERE tg_id = $2;`
 
 	// Выполнение запроса на обновление данных.
 	if _, err := dbutils.Exec(ctx, storage.db, sqlString, limits, userID); err != nil {
@@ -182,46 +153,7 @@ func (storage *UserStorage) SetUserLimit(ctx context.Context, userID int64, limi
 	return nil
 }
 
-// checkIfUserOverLimit Проверка, что текущие расходы пользователя не превзошли лимит (можно вызывать внутри транзакции).
-func checkIfUserOverLimit(ctx context.Context, db sqlx.QueryerContext, userID int64, period time.Time) (bool, error) {
-	// Проверка наличия записей о расходах.
-	isRecsExist, err := checkIfUserRecordsExistInPeriod(ctx, db, userID, period)
-	if err != nil {
-		return false, err
-	}
-	if !isRecsExist {
-		// Записей о расходах в указанном периоде нет, превышения нет.
-		return false, nil
-	}
-
-	// Запрос на проверку лимита.
-	const sqlString = `
-		SELECT SUM(r.sum) > u.limits AND NOT u.limits = 0 AS overlimit
-		FROM usermoneytransactions AS r
-			INNER JOIN users AS u
-				ON r.user_id = u.id
-		WHERE u.tg_id = $1 AND r.period >= $2 AND r.period < $3
-		GROUP BY u.limits;`
-
-	// Выполнение запроса на получение данных.
-	res, err := dbutils.GetMap(ctx, db, sqlString, userID, period, timeutils.BeginOfNextMonth(period))
-	if err != nil {
-		return false, err
-	}
-	// Приведение результата запроса к нужному типу.
-	overlimit, ok := res["overlimit"].(bool)
-	if !ok {
-		return false, errors.New("Ошибка приведения типа результата запроса.")
-	}
-	if overlimit {
-		return true, nil
-	}
-	return false, nil
-}
-
-// checkIfUserRecordsExistInPeriod Проверка наличия записей о расходах пользователя
-// в базе данных (можно вызывать внутри транзакции).
-func checkIfUserRecordsExistInPeriod(ctx context.Context, db sqlx.QueryerContext, userID int64, period time.Time) (bool, error) {
+func checkIfUserRecordsExist(ctx context.Context, db sqlx.QueryerContext, userID int64) (bool, error) {
 	// Запрос на проверку лимита.
 	const sqlString = `
 		SELECT COUNT(r.id) AS counter
@@ -229,11 +161,10 @@ func checkIfUserRecordsExistInPeriod(ctx context.Context, db sqlx.QueryerContext
 			INNER JOIN usermoneytransactions AS r
 				ON r.user_id = u.id
 		WHERE u.tg_id = $1 
-		  AND r.period >= $2 AND r.period < $3
 		;`
 
 	// Выполнение запроса на получение данных.
-	cnt, err := dbutils.GetMap(ctx, db, sqlString, userID, period, timeutils.BeginOfNextMonth(period))
+	cnt, err := dbutils.GetMap(ctx, db, sqlString, userID)
 	if err != nil {
 		return false, err
 	}
@@ -249,18 +180,18 @@ func checkIfUserRecordsExistInPeriod(ctx context.Context, db sqlx.QueryerContext
 }
 
 // insertUserDataRecordTx Функция добавления расхода, выполняемая внутри транзакции (tx).
-func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int64, rec types.UserDataRecord, limitPeriod time.Time) (bool, error) {
+func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int64, rec types.UserDataRecord) error {
 
 	// Запрос на добаление записи с проверкой существования категории.
 	const sqlString = `
 		WITH rows AS (INSERT INTO usercategories (user_id, name)
-			(SELECT id, :category_name FROM users WHERE users.tg_id = :tg_id)
+		(SELECT id, :category_name FROM users WHERE users.tg_id = :tg_id)
 		ON CONFLICT (user_id, lower(name)) DO NOTHING)
-		INSERT INTO usermoneytransactions (user_id, category_id, sum, period)
-			(SELECT u.id, c.id, :sum, :period
-			 FROM usercategories AS c
-					  INNER JOIN users AS u ON c.user_id = u.id
-			 WHERE u.tg_id = :tg_id AND lower(c.name) = lower(:category_name))
+		INSERT INTO usermoneytransactions (user_id, category_id, sum)
+		(SELECT u.id, c.id, :sum
+		FROM usercategories AS c
+		INNER JOIN users AS u ON c.user_id = u.id
+		WHERE u.tg_id = :tg_id AND lower(c.name) = lower(:category_name))
 		ON CONFLICT DO NOTHING;`
 
 	// Именованные параметры запроса.
@@ -268,26 +199,13 @@ func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int6
 		"tg_id":         userID,
 		"category_name": rec.Category,
 		"sum":           rec.Sum,
-		"period":        rec.Period,
 	}
 
 	// Запуск на выполнение запроса с именованными параметрами.
 	if _, err := dbutils.NamedExec(ctx, tx, sqlString, args); err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
-		return false, err
+		return err
 	}
 
-	// Проверка превышения (для отката транзакции в случае превышения).
-	isOverLimit, err := checkIfUserOverLimit(ctx, tx, userID, limitPeriod)
-	if err != nil {
-		// Ошибка чтения из базы (вызовет откат транзакции).
-		return false, err
-	}
-	if isOverLimit {
-		// Признак превышения лимита (вызовет откат транзакции)
-		return true, errors.New("Превышение лимита.")
-	}
-	// Возвращается признак, что превышения не было, ошибки отсутствуют
-	// (вызовет коммит транзакции).
-	return false, nil
+	return nil
 }

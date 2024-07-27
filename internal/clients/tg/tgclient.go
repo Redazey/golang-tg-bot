@@ -100,9 +100,8 @@ func ProcessingMessages(tgUpdate tgbotapi.Update, c *Client, msgModel *messages.
 	}
 }
 
-// ShowInlineButtons Отображение кнопок меню под сообщением с ответом.
 // Их нажатие ожидает коллбек-ответ.
-func (c *Client) ShowInlineButtons(msgText string, buttons types.TgRowButtons, userID int64) error {
+func (c *Client) ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) error {
 	buttns := make([]tgbotapi.KeyboardButton, 0, len(buttons))
 	for i := 0; i < len(buttons); i++ {
 		button := tgbotapi.NewKeyboardButton(buttons[i].Text)
@@ -114,13 +113,11 @@ func (c *Client) ShowInlineButtons(msgText string, buttons types.TgRowButtons, u
 
 	// Создаем клавиатуру
 	keyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			buttns...,
-		),
+		tgbotapi.NewKeyboardButtonRow(buttns...),
 	)
 
 	// Настраиваем параметры сообщения
-	msg := tgbotapi.NewMessage(userID, msgText)
+	msg := tgbotapi.NewMessage(userID, text)
 	msg.ReplyMarkup = keyboard
 
 	_, err := c.client.Send(msg)
@@ -129,6 +126,51 @@ func (c *Client) ShowInlineButtons(msgText string, buttons types.TgRowButtons, u
 		return errors.Wrap(err, "client.Send with inline-buttons")
 	}
 
+	return nil
+}
+
+func (c *Client) ShowInlineButtons(text string, buttons []types.TgRowButtons, userID int64) (int, error) {
+	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons))
+	for i := 0; i < len(buttons); i++ {
+		tgRowButtons := buttons[i]
+		keyboard[i] = make([]tgbotapi.InlineKeyboardButton, len(tgRowButtons))
+		for j := 0; j < len(tgRowButtons); j++ {
+			tgInlineButton := tgRowButtons[j]
+			keyboard[i][j] = tgbotapi.NewInlineKeyboardButtonData(tgInlineButton.DisplayName, tgInlineButton.Value)
+		}
+	}
+	var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(keyboard...)
+	msg := tgbotapi.NewMessage(userID, text)
+	msg.ReplyMarkup = numericKeyboard
+	msg.ParseMode = "markdown"
+
+	sendedMsg, err := c.client.Send(msg)
+	if err != nil {
+		logger.Error("Ошибка отправки сообщения", zap.Error(err))
+		return 0, errors.Wrap(err, "client.Send with inline-buttons")
+	}
+	return sendedMsg.MessageID, nil
+}
+
+func (c *Client) EditInlineButtons(text string, msgID int, buttons []types.TgRowButtons, userID int64) error {
+	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons))
+	for i := 0; i < len(buttons); i++ {
+		tgRowButtons := buttons[i]
+		keyboard[i] = make([]tgbotapi.InlineKeyboardButton, len(tgRowButtons))
+		for j := 0; j < len(tgRowButtons); j++ {
+			tgInlineButton := tgRowButtons[j]
+			keyboard[i][j] = tgbotapi.NewInlineKeyboardButtonData(tgInlineButton.DisplayName, tgInlineButton.Value)
+		}
+	}
+	var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(keyboard...)
+	msg := tgbotapi.NewEditMessageTextAndMarkup(userID, msgID, text, numericKeyboard)
+	msg.ParseMode = "markdown"
+
+	_, err := c.client.Send(msg)
+	if err != nil {
+		logger.Error("Ошибка отправки сообщения", zap.Error(err))
+		return errors.Wrap(err, "client.Send with inline-buttons")
+	}
 	return nil
 }
 

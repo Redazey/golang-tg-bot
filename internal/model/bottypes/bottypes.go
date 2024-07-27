@@ -13,7 +13,7 @@ type UserCategorySet map[string]Empty
 type UserDataRecord struct {
 	UserID   int64
 	Category string
-	Sum      int64
+	Sum      float64
 	Period   time.Time
 }
 
@@ -26,11 +26,21 @@ type UserDataReportRecord struct {
 // Типы для описания состава кнопок телеграм сообщения.
 // Кнопка сообщения.
 type TgInlineButton struct {
-	Text string
+	DisplayName string
+	Value       string
 }
 
 // Строка с кнопками сообщения.
 type TgRowButtons []TgInlineButton
+
+// Типы для описания состава кнопок телеграм сообщения.
+// Кнопка сообщения.
+type TgKeyboardButton struct {
+	Text string
+}
+
+// Строка с кнопками сообщения.
+type TgKbRowButtons []TgKeyboardButton
 
 // Тип для хранения курса валюты в формате "USD" = 0.01659657
 type ExchangeRate map[string]float64
