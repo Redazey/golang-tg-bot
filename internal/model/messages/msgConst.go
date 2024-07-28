@@ -48,11 +48,11 @@ var BtnFullz = []types.TgRowButtons{
 // Кнопки для вкладки профиль
 var BtnProfile = []types.TgRowButtons{
 	{
-		types.TgInlineButton{DisplayName: "Refill balance", Value: "deposit"},
+		types.TgInlineButton{DisplayName: "Refill balance", Value: "refill"},
 	},
 	{
 		types.TgInlineButton{DisplayName: "Orders history", Value: "orders"},
-		types.TgInlineButton{DisplayName: "Refill history", Value: "deposits"},
+		types.TgInlineButton{DisplayName: "Refill history", Value: "refills"},
 	},
 }
 
@@ -66,22 +66,14 @@ const (
 	TxtTUDesc    = "TU"
 	TxtFullzDesc = `Fullz with ready experian in format {name:address:city;state;zip;dob;dl:dl} issue date,
 	expiration date, credit score 700+`
-	TxtProfile          = "📰 ID: %v\n💎 Balance: %v\n📊 Orders: %v"
-	TxtSup              = "For assistance, please contact technical support: "
-	TxtUnknownCommand   = "Unfortunately, this command is unknown to me. To get started, please enter /start."
-	TxtReportError      = "Can't get a report."
-	TxtReportWait       = "Creating report, please wait..."
-	TxtCatChoice        = "Выбрана категория *%v*. Введите сумму (только число). Для отмены введите 0. Используемая валюта: *%v*"
-	TxtCatSave          = "Категория успешно сохранена."
-	TxtCatEmpty         = "Пока нет категорий, сначала добавьте хотя бы одну категорию."
-	TxtRecSave          = "Запись успешно сохранена."
-	TxtRecOverLimit     = "Запись не сохранена: превышен бюджет раходов в текущем месяце."
-	TxtRecTbl           = "Для загрузки истории расходов введите таблицу в следующем формате (дата сумма категория):\n`YYYY-MM-DD 0.00 XXX`\nНапример: \n`2022-09-20 1500 Кино`\n`2022-07-12 350.50 Продукты, еда`\n`2022-08-30 8000 Одежда и обувь`\n`2022-09-01 60 Бензин`\n`2022-09-27 425 Такси`\n`2022-09-26 1500 Бензин`\n`2022-09-26 950 Кошка`\n`2022-09-25 50 Бензин`\nИспользуемая валюта: *%v*"
-	TxtReportQP         = "За какой период будем смотреть отчет? Команды периодов: /report_w - неделя, /report_m - месяц, /report_y - год"
-	TxtHelp             = "Я - бот, помогающий вести учет расходов. Для начала работы введите /start"
-	TxtCurrencyChoice   = "В качестве основной задана валюта: *%v*. Для изменения выберите другую валюту."
-	TxtCurrencySet      = "Валюта изменена на *%v*."
-	TxtCurrencySetError = "Ошибка сохранения валюты."
-	TxtLimitInfo        = "Текущий ежемесячный бюджет: *%v*. Для изменения введите число, например, 80000."
-	TxtLimitSet         = "Бюджет изменен на *%v*."
+	TxtProfile            = "📰 ID: %v\n💎 Balance: %v\n📊 Orders: %v"
+	TxtSup                = "For assistance, please contact technical support: "
+	TxtUnknownCommand     = "Unfortunately, this command is unknown to me. To get started, please enter /start."
+	TxtPaymentQuestion    = "Enter the amount you wish to add to your account: "
+	TxtPaymentNotInt      = "Please use only whole numbers for input 😉"
+	TxtPaymentSuccsessful = "Account topped up! 💵"
+	TxtPaymentErr         = "An error occurred while transferring funds! Please double-check your information or contact support"
+	TxtPaymentNotEnough   = "You have insufficient funds in your account, please top up"
+	TxtOrderHistory       = "💡 Order № %v\n🕐 Date %v\n📁 Category %v\n💰 Sum %v\n➖➖➖➖➖➖➖➖➖➖➖➖"
+	TxtHelp               = "This is a bot for Experian and Trans union reports (cr,tu). Enter /start"
 )

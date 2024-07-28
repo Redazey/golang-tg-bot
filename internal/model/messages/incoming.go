@@ -3,13 +3,14 @@ package messages
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
-	"tgssn/pkg/logger"
 
 	"github.com/opentracing/opentracing-go"
-	"go.uber.org/zap"
 
+	"tgssn/cmd/payment"
 	types "tgssn/internal/model/bottypes"
+	"tgssn/pkg/errors"
 )
 
 // Область "Внешний интерфейс": начало.
@@ -26,10 +27,10 @@ type MessageSender interface {
 type UserDataStorage interface {
 	CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error)
 	InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord) (bool, error)
-	AddUserLimit(ctx context.Context, userID int64, limits float64, userName string) error
+	AddUserLimit(ctx context.Context, userID int64, limits float64) error
 	GetUserLimit(ctx context.Context, userID int64) (float64, error)
-	//----mock
-	GetUserOrdersCount(ctx context.Context, userID int64) (int64, error)
+	CheckIfUserRecordsExist(ctx context.Context, userID int64) (int64, error)
+	GetUserOrders(ctx context.Context, userID int64) (types.UserDataRecord, error)
 }
 
 // Model Модель бота (клиент, хранилище, последние команды пользователя)
@@ -38,6 +39,7 @@ type Model struct {
 	tgClient        MessageSender   // Клиент.
 	storage         UserDataStorage // Хранилище пользовательской информации.
 	lastInlineKbMsg map[int64]int
+	lastUserCommand map[int64]string
 }
 
 // New Генерация сущности для хранения клиента ТГ и хранилища пользователей
@@ -47,6 +49,7 @@ func New(ctx context.Context, tgClient MessageSender, storage UserDataStorage) *
 		tgClient:        tgClient,
 		storage:         storage,
 		lastInlineKbMsg: map[int64]int{},
+		lastUserCommand: map[int64]string{},
 	}
 }
 
@@ -74,12 +77,18 @@ func (s *Model) IncomingMessage(msg Message) error {
 	s.ctx = ctx
 	defer span.Finish()
 
+	lastUserCommand := s.lastUserCommand[msg.UserID]
+
 	// Распознавание стандартных команд.
 	if isNeedReturn, err := checkBotCommands(s, msg); err != nil || isNeedReturn {
 		return err
 	}
 
 	if isNeedReturn, err := callbacksCommands(s, msg); err != nil || isNeedReturn {
+		return err
+	}
+
+	if isNeedReturn, err := checkIfEnterRefillBalance(s, msg, lastUserCommand); err != nil || isNeedReturn {
 		return err
 	}
 
@@ -103,26 +112,30 @@ func checkBotCommands(s *Model, msg Message) (bool, error) {
 		}
 
 		if err := s.tgClient.ShowKeyboardButtons(fmt.Sprintf(TxtStart, displayName), BtnStart, msg.UserID); err != nil {
-			return false, err
+			return true, err
 		}
 
 		return true, nil
 	case "Categories":
 		lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, BtnCtgs, msg.UserID)
 		if err != nil {
-			return false, err
+			return true, err
 		}
 		s.lastInlineKbMsg[msg.UserID] = lastMsgID
 		return true, nil
 	case "Profile":
-		balance, err := s.storage.GetUserLimit(ctx, msg.UserID)
-		if err != nil {
-			return false, err
+		if _, err := s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
+			return true, err
 		}
 
-		orders, err := s.storage.GetUserOrdersCount(ctx, msg.UserID)
+		balance, err := s.storage.GetUserLimit(ctx, msg.UserID)
 		if err != nil {
-			return false, err
+			return true, err
+		}
+
+		orders, err := s.storage.CheckIfUserRecordsExist(ctx, msg.UserID)
+		if err != nil {
+			return true, err
 		}
 
 		lastMsgID, err := s.tgClient.ShowInlineButtons(
@@ -131,7 +144,7 @@ func checkBotCommands(s *Model, msg Message) (bool, error) {
 			msg.UserID,
 		)
 		if err != nil {
-			return false, err
+			return true, err
 		}
 		s.lastInlineKbMsg[msg.UserID] = lastMsgID
 
@@ -150,14 +163,14 @@ func checkBotCommands(s *Model, msg Message) (bool, error) {
 // callbacks
 func callbacksCommands(s *Model, msg Message) (bool, error) {
 	if msg.IsCallback {
-		span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkIfCoiceCurrency")
+		span, ctx := opentracing.StartSpanFromContext(s.ctx, "callbacksCommands")
 		s.ctx = ctx
 		defer span.Finish()
 
 		if strings.Contains(msg.Text, "back") {
 			lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, BtnCtgs, msg.UserID)
 			if err != nil {
-				return false, err
+				return true, err
 			}
 			s.lastInlineKbMsg[msg.UserID] = lastMsgID
 			return true, nil
@@ -185,6 +198,23 @@ func callbacksCommands(s *Model, msg Message) (bool, error) {
 				BtnFullz,
 				msg.UserID,
 			)
+		} else if strings.Contains(msg.Text, "refill") {
+			s.tgClient.SendMessage(TxtPaymentQuestion, msg.UserID)
+			s.lastUserCommand[msg.UserID] = "refill"
+			return true, nil
+		} else if strings.Contains(msg.Text, "orders") {
+
+			orders, err := s.storage.GetUserOrders(ctx, msg.UserID)
+			if err != nil {
+				return true, err
+			}
+
+			return true, s.tgClient.EditInlineButtons(
+				fmt.Sprintf(TxtOrderHistory, orders.RedcordID, orders.Period, orders.Category, orders.Sum),
+				s.lastInlineKbMsg[msg.UserID],
+				BtnFullz,
+				msg.UserID,
+			)
 		}
 	}
 
@@ -192,12 +222,33 @@ func callbacksCommands(s *Model, msg Message) (bool, error) {
 	return false, nil
 }
 
-// Получение бюджета пользователя.
-func getUserLimit(s *Model, userID int64) (float64, error) {
-	userLimit, err := s.storage.GetUserLimit(s.ctx, userID)
-	if err != nil {
-		logger.Error("Ошибка получения бюджета", zap.Error(err))
-		return 0, err
+func checkIfEnterRefillBalance(s *Model, msg Message, lastUserCommand string) (bool, error) {
+	if lastUserCommand == "refill" {
+		span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkIfEnterRefillBalance")
+		s.ctx = ctx
+		defer span.Finish()
+
+		userInput, err := strconv.Atoi(msg.Text)
+		if err != nil {
+			s.tgClient.SendMessage(TxtPaymentNotInt, msg.UserID)
+			s.lastUserCommand[msg.UserID] = ""
+			return true, errors.Wrap(err, "Пользователь ввёл не числовое значение")
+		}
+
+		p := payment.New(ctx, s.storage)
+		if paymentState, err := p.MockPay(int64(userInput)); err != nil {
+			s.tgClient.SendMessage(TxtPaymentErr, msg.UserID)
+			return true, errors.Wrap(err, "Ошибка при переводе средств")
+		} else if !paymentState {
+			s.tgClient.SendMessage(TxtPaymentNotEnough, msg.UserID)
+			return true, nil
+		}
+
+		s.storage.AddUserLimit(ctx, msg.UserID, float64(userInput))
+		s.tgClient.SendMessage(TxtPaymentSuccsessful, msg.UserID)
+		s.lastUserCommand[msg.UserID] = ""
+		return true, nil
 	}
-	return userLimit, nil
+	// Это не ввод новой категории.
+	return false, nil
 }

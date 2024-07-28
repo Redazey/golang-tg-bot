@@ -4,6 +4,7 @@ package db
 
 import (
 	"context"
+	"time"
 
 	types "tgssn/internal/model/bottypes"
 	"tgssn/internal/utils/dbutils"
@@ -14,8 +15,9 @@ import (
 
 // UserDataReportRecordDB - Тип, принимающий структуру записей о расходах.
 type UserDataReportRecordDB struct {
-	Category string `db:"name"`
-	Sum      int64  `db:"sum"`
+	Category string    `db:"name"`
+	Sum      int64     `db:"sum"`
+	Time     time.Time `db:"timestamp"`
 }
 
 // UserStorage - Тип для хранилища информации о пользователях.
@@ -29,10 +31,6 @@ func NewUserStorage(db *sqlx.DB) *UserStorage {
 	return &UserStorage{
 		db: db,
 	}
-}
-
-func (storage *UserStorage) GetUserOrdersCount(ctx context.Context, userID int64) (int64, error) {
-	return 6969, nil
 }
 
 // InsertUser Добавление пользователя в базу данных.
@@ -135,7 +133,7 @@ func (storage *UserStorage) GetUserLimit(ctx context.Context, userID int64) (flo
 	return limits, nil
 }
 
-func (storage *UserStorage) AddUserLimit(ctx context.Context, userID int64, limits float64, userName string) error {
+func (storage *UserStorage) AddUserLimit(ctx context.Context, userID int64, limits float64) error {
 	// Проверка существования пользователя в БД.
 	_, err := storage.CheckIfUserExistAndAdd(ctx, userID)
 	if err != nil {
@@ -153,7 +151,7 @@ func (storage *UserStorage) AddUserLimit(ctx context.Context, userID int64, limi
 	return nil
 }
 
-func checkIfUserRecordsExist(ctx context.Context, db sqlx.QueryerContext, userID int64) (bool, error) {
+func (storage *UserStorage) CheckIfUserRecordsExist(ctx context.Context, userID int64) (int64, error) {
 	// Запрос на проверку лимита.
 	const sqlString = `
 		SELECT COUNT(r.id) AS counter
@@ -164,19 +162,22 @@ func checkIfUserRecordsExist(ctx context.Context, db sqlx.QueryerContext, userID
 		;`
 
 	// Выполнение запроса на получение данных.
-	cnt, err := dbutils.GetMap(ctx, db, sqlString, userID)
+	cnt, err := dbutils.GetMap(ctx, storage.db, sqlString, userID)
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 	// Приведение результата запроса к нужному типу.
 	counter, ok := cnt["counter"].(int64)
 	if !ok {
-		return false, errors.New("Ошибка приведения типа результата запроса.")
+		return 0, errors.New("Ошибка приведения типа результата запроса.")
 	}
-	if counter == 0 {
-		return false, nil
-	}
-	return true, nil
+	return counter, nil
+}
+
+func (storage *UserStorage) GetUserOrders(ctx context.Context, userID int64) (types.UserDataRecord, error) {
+	// Запрос на добаление записи с проверкой существования категории.
+
+	return types.UserDataRecord{}, nil
 }
 
 // insertUserDataRecordTx Функция добавления расхода, выполняемая внутри транзакции (tx).

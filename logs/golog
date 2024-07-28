@@ -346,3 +346,68 @@
 {"level":"info","ts":"2024-07-27T01:47:37.226Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
 {"level":"info","ts":"2024-07-27T01:49:48.269Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
 {"level":"info","ts":"2024-07-27T01:49:48.269Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T10:11:15.952Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
+{"level":"info","ts":"2024-07-28T10:11:15.952Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T10:13:51.374Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-07-28T10:13:53.500Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T10:15:46.294Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T10:16:14.189Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T10:31:21.345Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T10:31:50.669Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-07-28T10:32:02.573Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-07-28T10:32:17.162Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: back"}
+{"level":"info","ts":"2024-07-28T11:42:45.717Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
+{"level":"info","ts":"2024-07-28T11:42:45.717Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T11:43:32.337Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-07-28T11:43:32.485Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-07-28T11:43:33.817Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:43:36.185Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:46:01.253Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
+{"level":"info","ts":"2024-07-28T11:46:01.254Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T11:46:03.810Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:46:04.877Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:46:11.083Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] fds"}
+{"level":"error","ts":"2024-07-28T11:46:11.250Z","caller":"logger/logger.go:63","msg":"error processing message:","error":"strconv.Atoi: parsing \"fds\": invalid syntax - Пользователь ввёл не числовое значение","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:63\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:77\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-07-28T11:46:15.732Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] fd"}
+{"level":"error","ts":"2024-07-28T11:46:15.840Z","caller":"logger/logger.go:63","msg":"error processing message:","error":"strconv.Atoi: parsing \"fd\": invalid syntax - Пользователь ввёл не числовое значение","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:63\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:77\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-07-28T11:46:22.675Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 33000"}
+{"level":"info","ts":"2024-07-28T11:46:42.968Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] fds"}
+{"level":"error","ts":"2024-07-28T11:46:43.097Z","caller":"logger/logger.go:63","msg":"error processing message:","error":"strconv.Atoi: parsing \"fds\": invalid syntax - Пользователь ввёл не числовое значение","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:63\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:77\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-07-28T11:46:46.759Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 100"}
+{"level":"info","ts":"2024-07-28T11:48:31.735Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
+{"level":"info","ts":"2024-07-28T11:48:31.736Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T11:48:34.810Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-07-28T11:48:36.760Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:48:37.856Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:48:39.898Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] fd"}
+{"level":"error","ts":"2024-07-28T11:48:40.046Z","caller":"logger/logger.go:63","msg":"error processing message:","error":"strconv.Atoi: parsing \"fd\": invalid syntax - Пользователь ввёл не числовое значение","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:63\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:77\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-07-28T11:48:41.561Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 100"}
+{"level":"info","ts":"2024-07-28T11:48:52.719Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-07-28T11:48:53.887Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:48:55.046Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:48:56.383Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 100"}
+{"level":"info","ts":"2024-07-28T11:51:01.115Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
+{"level":"info","ts":"2024-07-28T11:51:01.115Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T11:51:03.618Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-07-28T11:51:04.846Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:51:06.079Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:51:10.039Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 100"}
+{"level":"info","ts":"2024-07-28T11:51:13.425Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 100"}
+{"level":"info","ts":"2024-07-28T11:52:11.725Z","caller":"logger/logger.go:55","msg":"Запуск бота"}
+{"level":"info","ts":"2024-07-28T11:52:11.725Z","caller":"logger/logger.go:55","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-07-28T11:52:15.607Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:52:17.188Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:52:21.630Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 300"}
+{"level":"info","ts":"2024-07-28T11:52:28.755Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 123"}
+{"level":"info","ts":"2024-07-28T11:52:30.353Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-07-28T11:52:31.787Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:55:16.333Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:55:19.230Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 💵"}
+{"level":"error","ts":"2024-07-28T11:55:19.334Z","caller":"logger/logger.go:63","msg":"error processing message:","error":"strconv.Atoi: parsing \"💵\": invalid syntax - Пользователь ввёл не числовое значение","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:63\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:77\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-07-28T11:56:00.862Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:56:02.216Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:56:03.778Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] авы"}
+{"level":"error","ts":"2024-07-28T11:56:03.956Z","caller":"logger/logger.go:63","msg":"error processing message:","error":"strconv.Atoi: parsing \"авы\": invalid syntax - Пользователь ввёл не числовое значение","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:63\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:77\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-07-28T11:56:06.006Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-07-28T11:56:07.002Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-07-28T11:56:10.365Z","caller":"logger/logger.go:55","msg":"[RedaxelF][887126386] 300"}

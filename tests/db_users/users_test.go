@@ -57,7 +57,7 @@ func TestUserStorage(t *testing.T) {
 	})
 
 	t.Run("TestAddUserLimit", func(t *testing.T) {
-		err := storage.AddUserLimit(ctx, 123456, 100, "test_user")
+		err := storage.AddUserLimit(ctx, 123456, 100)
 		assert.NoError(t, err)
 
 		limit, err := storage.GetUserLimit(ctx, 123456)

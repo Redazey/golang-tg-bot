@@ -11,10 +11,11 @@ type UserCategorySet map[string]Empty
 
 // Тип для записей о тратах.
 type UserDataRecord struct {
-	UserID   int64
-	Category string
-	Sum      float64
-	Period   time.Time
+	RedcordID int64
+	UserID    int64
+	Category  string
+	Sum       float64
+	Period    time.Time
 }
 
 // Тип для записей отчета.
