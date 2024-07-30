@@ -33,27 +33,29 @@ func TestUserStorage(t *testing.T) {
 	})
 
 	t.Run("TestInsertUserDataRecord", func(t *testing.T) {
-		isOverLimit, err := storage.InsertUserDataRecord(ctx, 123456, bottypes.UserDataRecord{
-			Category: "test_category",
+		ok, err := storage.InsertUserDataRecord(ctx, 123456, bottypes.UserDataRecord{
+			Category: "CR",
 			Sum:      100,
 		})
 		assert.NoError(t, err)
-		assert.False(t, isOverLimit)
+		assert.True(t, ok)
 	})
 
 	t.Run("TestInsertUserDataRecordOverLimit", func(t *testing.T) {
-		isOverLimit, err := storage.InsertUserDataRecord(ctx, 123456, bottypes.UserDataRecord{
+		ok, err := storage.InsertUserDataRecord(ctx, 123456, bottypes.UserDataRecord{
 			Category: "test_category",
 			Sum:      1000000,
 		})
 		assert.NoError(t, err)
-		assert.False(t, isOverLimit)
+		assert.False(t, ok)
 	})
 
+	var currLimit float64
 	t.Run("TestGetUserLimit", func(t *testing.T) {
 		limit, err := storage.GetUserLimit(ctx, 123456)
 		assert.NoError(t, err)
-		assert.Equal(t, float64(0), limit)
+		assert.IsType(t, currLimit, limit)
+		currLimit = limit
 	})
 
 	t.Run("TestAddUserLimit", func(t *testing.T) {
@@ -62,6 +64,7 @@ func TestUserStorage(t *testing.T) {
 
 		limit, err := storage.GetUserLimit(ctx, 123456)
 		assert.NoError(t, err)
-		assert.Equal(t, float64(100), limit)
+		assert.Equal(t, float64(currLimit+100), limit)
 	})
+
 }

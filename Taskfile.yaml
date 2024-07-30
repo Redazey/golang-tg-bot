@@ -9,7 +9,9 @@ tasks:
         - task: build
     test:
         cmds:
-        - cd backend && CGO_ENABLED=1 go test -race -count 1 ./...
+        - go run cmd/migrator/main.go --migrations-path=./tests/migrations --mode=up
+        - go test -race -count 1 ./...
+        - go run cmd/migrator/main.go --migrations-path=./tests/migrations --mode=down
 
     cover:
         cmds:
@@ -27,8 +29,12 @@ tasks:
 
         - go build -o tgssn_amd64.exe ./cmd/main/main.go
 
-    migrator:
+    migrate-up:
         cmds:
-        - go run cmd/migrator/main.go --migrations-path=./migrations
+        - go run cmd/migrator/main.go --migrations-path=./migrations --mode=up
+
+    migrate-down:
+        cmds:
+        - go run cmd/migrator/main.go --migrations-path=./migrations --mode=down
 
       

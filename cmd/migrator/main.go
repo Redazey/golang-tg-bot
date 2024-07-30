@@ -14,8 +14,10 @@ import (
 
 func main() {
 	var migrationsPath string
+	var migrationMode string
 	// Путь до папки с миграциями.
 	flag.StringVar(&migrationsPath, "migrations-path", "", "path to migrations")
+	flag.StringVar(&migrationMode, "mode", "up", "migration mode (up or down)")
 	flag.Parse()
 
 	env, err := config.NewEnv()
@@ -34,13 +36,28 @@ func main() {
 
 	defer m.Close()
 
-	if err := m.Up(); err != nil {
-		if errors.Is(err, migrate.ErrNoChange) {
-			log.Println("No migrations to apply")
+	if migrationMode == "up" {
+		if err := m.Up(); err != nil {
+			if errors.Is(err, migrate.ErrNoChange) {
+				log.Println("No migrations to apply")
+			} else {
+				log.Fatal(err)
+			}
 		} else {
-			log.Fatal(err)
+			log.Println("Migrations applied successfully")
+		}
+	} else if migrationMode == "down" {
+		if err := m.Down(); err != nil {
+			if errors.Is(err, migrate.ErrNoChange) {
+				log.Println("No migrations to apply")
+			} else {
+				log.Fatal(err)
+			}
+		} else {
+			log.Println("Migrations applied successfully")
 		}
 	} else {
-		log.Println("Migrations applied successfully")
+		log.Fatal("wrong flag value")
 	}
+
 }

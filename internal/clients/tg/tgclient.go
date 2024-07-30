@@ -83,9 +83,6 @@ func ProcessingMessages(tgUpdate tgbotapi.Update, c *Client, msgModel *messages.
 		if _, err := c.client.Request(callback); err != nil {
 			logger.Error("Ошибка Request callback:", zap.Error(err))
 		}
-		if err := deleteInlineButtons(c, tgUpdate.CallbackQuery.From.ID, tgUpdate.CallbackQuery.Message.MessageID, tgUpdate.CallbackQuery.Message.Text); err != nil {
-			logger.Error("Ошибка удаления кнопок:", zap.Error(err))
-		}
 		err := msgModel.IncomingMessage(messages.Message{
 			Text:            tgUpdate.CallbackQuery.Data,
 			UserID:          tgUpdate.CallbackQuery.From.ID,
@@ -152,7 +149,7 @@ func (c *Client) ShowInlineButtons(text string, buttons []types.TgRowButtons, us
 	return sendedMsg.MessageID, nil
 }
 
-func (c *Client) EditInlineButtons(text string, msgID int, buttons []types.TgRowButtons, userID int64) error {
+func (c *Client) EditInlineButtons(text string, msgID int, userID int64, buttons []types.TgRowButtons) error {
 	keyboard := make([][]tgbotapi.InlineKeyboardButton, len(buttons))
 	for i := 0; i < len(buttons); i++ {
 		tgRowButtons := buttons[i]
@@ -171,15 +168,17 @@ func (c *Client) EditInlineButtons(text string, msgID int, buttons []types.TgRow
 		logger.Error("Ошибка отправки сообщения", zap.Error(err))
 		return errors.Wrap(err, "client.Send with inline-buttons")
 	}
+
 	return nil
 }
 
-func deleteInlineButtons(c *Client, userID int64, msgID int, sourceText string) error {
+func (c *Client) DeleteInlineButtons(userID int64, msgID int, sourceText string) error {
 	msg := tgbotapi.NewEditMessageText(userID, msgID, sourceText)
 	_, err := c.client.Send(msg)
 	if err != nil {
 		logger.Error("Ошибка отправки сообщения", zap.Error(err))
 		return errors.Wrap(err, "client.Send remove inline-buttons")
 	}
+
 	return nil
 }

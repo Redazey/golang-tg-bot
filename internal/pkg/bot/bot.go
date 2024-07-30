@@ -25,7 +25,7 @@ func Init() (*App, error) {
 		return nil, err
 	}
 
-	logger.Init(cfg.LoggerLevel)
+	logger.Init(cfg.LoggerLevel, "")
 
 	err = db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
 	if err != nil {

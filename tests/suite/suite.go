@@ -5,6 +5,7 @@ import (
 	"testing"
 	"tgssn/config"
 	"tgssn/pkg/db"
+	"tgssn/pkg/logger"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -18,14 +19,15 @@ type Suite struct {
 
 // New creates new test suite.
 func New(t *testing.T) (context.Context, *Suite) {
-	t.Helper()   // Функция будет восприниматься как вспомогательная для тестов
-	t.Parallel() // Разрешаем параллельный запуск тестов
+	t.Helper() // Функция будет восприниматься как вспомогательная для тестов
 
 	// Читаем конфиг из файла
 	env, err := config.NewEnv("../../.env")
 	if err != nil {
 		t.Fatalf("ошибка при инициализации файла конфигурации: %s", err)
 	}
+
+	logger.Init(env.LoggerLevel, "../../logs/golog")
 
 	err = db.Init(env.DB.DBUser, env.DB.DBPassword, env.DB.DBHost, env.DB.DBName)
 	if err != nil {

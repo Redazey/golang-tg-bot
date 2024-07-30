@@ -18,12 +18,6 @@ type UserDataRecord struct {
 	Period    time.Time
 }
 
-// Тип для записей отчета.
-type UserDataReportRecord struct {
-	Category string  // Категория.
-	Sum      float64 // Сумма расходов по категории.
-}
-
 // Типы для описания состава кнопок телеграм сообщения.
 // Кнопка сообщения.
 type TgInlineButton struct {

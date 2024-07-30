@@ -1,0 +1,1 @@
+TRUNCATE workers, tickets RESTART IDENTITY;

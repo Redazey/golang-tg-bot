@@ -19,8 +19,9 @@ import (
 type MessageSender interface {
 	SendMessage(text string, userID int64) error
 	ShowInlineButtons(text string, buttons []types.TgRowButtons, userID int64) (int, error)
-	EditInlineButtons(text string, msgID int, buttons []types.TgRowButtons, userID int64) error
+	EditInlineButtons(text string, msgID int, userID int64, buttons []types.TgRowButtons) error
 	ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) error
+	DeleteInlineButtons(userID int64, msgID int, sourceText string) error
 }
 
 // UserDataStorage Интерфейс для работы с хранилищем данных.
@@ -151,8 +152,10 @@ func checkBotCommands(s *Model, msg Message) (bool, error) {
 		return true, nil
 	case "Support":
 		s.tgClient.SendMessage(TxtSup, msg.UserID)
+		s.lastInlineKbMsg[msg.UserID] = 0
 		return true, nil
 	case "/help":
+		s.lastInlineKbMsg[msg.UserID] = 0
 		return true, s.tgClient.SendMessage(TxtHelp, msg.UserID)
 	}
 
@@ -167,43 +170,98 @@ func callbacksCommands(s *Model, msg Message) (bool, error) {
 		s.ctx = ctx
 		defer span.Finish()
 
-		if strings.Contains(msg.Text, "back") {
-			lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, BtnCtgs, msg.UserID)
+		// Дерево callbacks начинающихся с Categories
+		if msg.Text == "backToCtg" {
+			err := s.tgClient.EditInlineButtons(
+				TxtCtgs,
+				s.lastInlineKbMsg[msg.UserID],
+				msg.UserID,
+				BtnCtgs,
+			)
 			if err != nil {
 				return true, err
 			}
-			s.lastInlineKbMsg[msg.UserID] = lastMsgID
+
 			return true, nil
 
-		} else if strings.Contains(msg.Text, "CR") {
+			// выбор категории товара
+
+		} else if msg.Text == "CR" {
 			return true, s.tgClient.EditInlineButtons(
 				fmt.Sprintf(TxtReports, "Experian", TxtCRDesc),
 				s.lastInlineKbMsg[msg.UserID],
-				BtnCR,
 				msg.UserID,
+				BtnCR,
 			)
 
-		} else if strings.Contains(msg.Text, "TU") {
+		} else if msg.Text == "TU" {
 			return true, s.tgClient.EditInlineButtons(
 				fmt.Sprintf(TxtReports, "Trans union", TxtTUDesc),
 				s.lastInlineKbMsg[msg.UserID],
-				BtnTU,
 				msg.UserID,
+				BtnTU,
 			)
 
-		} else if strings.Contains(msg.Text, "fullz") {
+		} else if msg.Text == "fullz" {
 			return true, s.tgClient.EditInlineButtons(
 				fmt.Sprintf(TxtReports, "Ready fulls", TxtFullzDesc),
 				s.lastInlineKbMsg[msg.UserID],
-				BtnFullz,
 				msg.UserID,
+				BtnFullz,
 			)
-		} else if strings.Contains(msg.Text, "refill") {
-			s.tgClient.SendMessage(TxtPaymentQuestion, msg.UserID)
-			s.lastUserCommand[msg.UserID] = "refill"
-			return true, nil
-		} else if strings.Contains(msg.Text, "orders") {
 
+			// покупка товара
+
+		} else if strings.Contains(msg.Text, "buy") {
+			if msg.Text == "buy TU" {
+				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, BackToCtgBtn)
+				s.lastUserCommand[msg.UserID] = "buy TU"
+				return true, nil
+
+			} else if msg.Text == "buy CR" {
+				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, BackToCtgBtn)
+				s.lastUserCommand[msg.UserID] = "buy CR"
+				return true, nil
+
+			} else {
+				s.tgClient.DeleteInlineButtons(msg.UserID, s.lastInlineKbMsg[msg.UserID], TxtPaymentQuestion)
+				s.lastUserCommand[msg.UserID] = "buy Fullz"
+				return true, nil
+			}
+
+			// Дерево callbacks начинающихся с Profile
+		} else if msg.Text == "backToProfile" {
+			if _, err := s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
+				return true, err
+			}
+
+			balance, err := s.storage.GetUserLimit(ctx, msg.UserID)
+			if err != nil {
+				return true, err
+			}
+
+			orders, err := s.storage.CheckIfUserRecordsExist(ctx, msg.UserID)
+			if err != nil {
+				return true, err
+			}
+
+			err = s.tgClient.EditInlineButtons(
+				fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
+				s.lastInlineKbMsg[msg.UserID],
+				msg.UserID,
+				BtnProfile,
+			)
+			if err != nil {
+				return true, err
+			}
+
+			return true, nil
+
+		} else if msg.Text == "refill" {
+			s.lastUserCommand[msg.UserID] = "refill"
+			return true, s.tgClient.EditInlineButtons(TxtPaymentQuestion, s.lastInlineKbMsg[msg.UserID], msg.UserID, BackToProfileBtn)
+
+		} else if msg.Text == "orders" {
 			orders, err := s.storage.GetUserOrders(ctx, msg.UserID)
 			if err != nil {
 				return true, err
@@ -212,8 +270,8 @@ func callbacksCommands(s *Model, msg Message) (bool, error) {
 			return true, s.tgClient.EditInlineButtons(
 				fmt.Sprintf(TxtOrderHistory, orders.RedcordID, orders.Period, orders.Category, orders.Sum),
 				s.lastInlineKbMsg[msg.UserID],
-				BtnFullz,
 				msg.UserID,
+				BackToProfileBtn,
 			)
 		}
 	}
@@ -223,32 +281,44 @@ func callbacksCommands(s *Model, msg Message) (bool, error) {
 }
 
 func checkIfEnterRefillBalance(s *Model, msg Message, lastUserCommand string) (bool, error) {
-	if lastUserCommand == "refill" {
+	if lastUserCommand != "" {
 		span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkIfEnterRefillBalance")
 		s.ctx = ctx
 		defer span.Finish()
 
-		userInput, err := strconv.Atoi(msg.Text)
-		if err != nil {
-			s.tgClient.SendMessage(TxtPaymentNotInt, msg.UserID)
-			s.lastUserCommand[msg.UserID] = ""
-			return true, errors.Wrap(err, "Пользователь ввёл не числовое значение")
-		}
+		if lastUserCommand == "refill" {
+			userInput, err := strconv.Atoi(msg.Text)
+			if err != nil || userInput == 0 {
+				s.tgClient.SendMessage(TxtPaymentNotInt, msg.UserID)
+				s.lastUserCommand[msg.UserID] = ""
+				return true, errors.Wrap(err, "Пользователь ввёл неверное значение")
+			}
 
-		p := payment.New(ctx, s.storage)
-		if paymentState, err := p.MockPay(int64(userInput)); err != nil {
-			s.tgClient.SendMessage(TxtPaymentErr, msg.UserID)
-			return true, errors.Wrap(err, "Ошибка при переводе средств")
-		} else if !paymentState {
-			s.tgClient.SendMessage(TxtPaymentNotEnough, msg.UserID)
+			p := payment.New(ctx, s.storage)
+			if paymentState, err := p.MockPay(int64(userInput)); err != nil {
+				s.tgClient.SendMessage(TxtPaymentErr, msg.UserID)
+				return true, errors.Wrap(err, "Ошибка при переводе средств")
+			} else if !paymentState {
+				s.tgClient.SendMessage(TxtPaymentNotEnough, msg.UserID)
+				return true, nil
+			}
+
+			s.storage.AddUserLimit(ctx, msg.UserID, float64(userInput))
+			s.tgClient.SendMessage(TxtPaymentSuccsessful, msg.UserID)
+			s.lastUserCommand[msg.UserID] = ""
+
+			return true, nil
+		} else if lastUserCommand == "buy TU" {
+
+			return true, nil
+		} else if lastUserCommand == "buy CR" {
+
+			return true, nil
+		} else if lastUserCommand == "buy Fullz" {
+
 			return true, nil
 		}
-
-		s.storage.AddUserLimit(ctx, msg.UserID, float64(userInput))
-		s.tgClient.SendMessage(TxtPaymentSuccsessful, msg.UserID)
-		s.lastUserCommand[msg.UserID] = ""
-		return true, nil
 	}
-	// Это не ввод новой категории.
+
 	return false, nil
 }

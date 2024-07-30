@@ -10,7 +10,7 @@ import (
 
 var logger *zap.Logger
 
-func Init(loggerLevel string) {
+func Init(loggerLevel string, logsPath string) {
 	// Логгирование
 	config := zap.NewProductionEncoderConfig()
 	config.EncodeLevel = zapcore.LowercaseLevelEncoder
@@ -18,7 +18,10 @@ func Init(loggerLevel string) {
 
 	fileEncoder := zapcore.NewJSONEncoder(config)
 	consoleEncoder := zapcore.NewConsoleEncoder(config)
-	logFile, err := os.OpenFile("logs/golog", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if logsPath == "" {
+		logsPath = "logs/golog"
+	}
+	logFile, err := os.OpenFile(logsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println("Ошибка создания файла golog", err)
 	}
