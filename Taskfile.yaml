@@ -9,15 +9,13 @@ tasks:
         - task: build
     test:
         cmds:
-        - go run cmd/migrator/main.go --migrations-path=./tests/migrations --mode=up
         - go test -race -count 1 ./...
-        - go run cmd/migrator/main.go --migrations-path=./tests/migrations --mode=down
 
     cover:
         cmds:
-        - CGO_ENABLED=1 go test -short -race -count 1 -coverprofile=coverage.out ./...
+        - go test -short -race -count 1 -coverprofile=coverage.out ./...
         - go tool cover -html=coverage.out
-        - cmd /c rmdir /s /q coverage.out
+        - rm ./coverage.out
 
     build:
         cmds:

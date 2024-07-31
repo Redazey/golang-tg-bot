@@ -39,8 +39,8 @@ func NewUserStorage(db *sqlx.DB) *UserStorage {
 func (storage *UserStorage) InsertUser(ctx context.Context, userID int64) error {
 	// Запрос на добавление данных.
 	const sqlString = `
-		INSERT INTO users (tg_id, limits)
-		VALUES ($1, 0)
+		INSERT INTO users (tg_id)
+		VALUES ($1)
 		ON CONFLICT (tg_id) DO NOTHING;
 	`
 
@@ -280,9 +280,38 @@ func (storage *UserStorage) GetAllWorkers(ctx context.Context, userID int64) ([]
 	return args, nil
 }
 
-func (storage *UserStorage) ChangeWorkerStatus(ctx context.Context, userID int64, status bool) error {
-	if _, err := storage.CheckIfWorkerExistAndAdd(ctx, userID); err != nil {
-		return err
+func (storage *UserStorage) getWorkerStatus(ctx context.Context, userID int64) (bool, error) {
+	const sqlString = `
+		SELECT status
+		FROM workers
+		WHERE tg_id = $1`
+
+	res, err := dbutils.GetMap(ctx, storage.db, sqlString, userID)
+	if err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return false, err
+	}
+	currStatus, ok := res["status"].(bool)
+	if !ok {
+		return false, err
+	}
+
+	if currStatus {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+// возвращает был ли обновлен статус работника
+func (storage *UserStorage) ChangeWorkerStatus(ctx context.Context, userID int64, status bool) (bool, error) {
+	currStatus, err := storage.getWorkerStatus(ctx, userID)
+	if err != nil {
+		return false, err
+	}
+
+	if currStatus == status {
+		return false, nil
 	}
 
 	const sqlString = `
@@ -292,35 +321,53 @@ func (storage *UserStorage) ChangeWorkerStatus(ctx context.Context, userID int64
 
 	if _, err := dbutils.Exec(ctx, storage.db, sqlString, status, userID); err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
-		return err
+		return false, err
 	}
 
-	return nil
+	return true, nil
 }
 
 // Функционал, относящийся к работе с тикетами
-
-func (storage *UserStorage) CreateTicket(ctx context.Context, userID int64) error {
+// Возвращает true, в случае если удалось создать тикет, false во всех остальных
+func (storage *UserStorage) CreateTicket(ctx context.Context, workerID int64, buyerID int64) (bool, error) {
+	if succsessful, err := storage.ChangeWorkerStatus(ctx, workerID, true); !succsessful || err != nil {
+		return false, err
+	}
 	// Запрос на добавление данных.
 	const sqlString = `
-		INSERT INTO tickets (tg_id)
-		VALUES ($1);`
+		INSERT INTO tickets (worker_tg_id, buyer_tg_id)
+		VALUES ($1, $2);`
 
-	if _, err := dbutils.Exec(ctx, storage.db, sqlString, userID); err != nil {
+	if _, err := dbutils.Exec(ctx, storage.db, sqlString, workerID, buyerID); err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (storage *UserStorage) UpdateTicketStatus(ctx context.Context, workerID int64, status string) error {
+	// Запрос на добавление данных.
+	const sqlString = `
+		UPDATE tickets 
+		SET status = $1
+		WHERE worker_tg_id = $2 AND status = 'in_progress';`
+
+	if _, err := dbutils.Exec(ctx, storage.db, sqlString, status, workerID); err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
 		return err
 	}
 	return nil
 }
 
-func (storage *UserStorage) UpdateTicketStatus(ctx context.Context, userID int64, status string) error {
+func (storage *UserStorage) GetBuyerID(ctx context.Context, workerID int64) error {
 	// Запрос на добавление данных.
 	const sqlString = `
-		UPDATE tickets 
-		SET status = $1
-		WHERE tg_id = $2 AND status = 'in_progress';`
+		SELECT buyer_tg_id
+		FROM tickets
+		WHERE worker_tg_id = $1 AND status = 'in_progress';`
 
-	if _, err := dbutils.Exec(ctx, storage.db, sqlString, status, userID); err != nil {
+	if _, err := dbutils.Exec(ctx, storage.db, sqlString, workerID); err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
 		return err
 	}
@@ -328,18 +375,18 @@ func (storage *UserStorage) UpdateTicketStatus(ctx context.Context, userID int64
 }
 
 // возвращает статистику по тикетам определенного воркера в виде goods - bads - error
-func (storage *UserStorage) CountWorkersStatistic(ctx context.Context, userID int64) (int64, int64, error) {
+func (storage *UserStorage) CountWorkersStatistic(ctx context.Context, workerID int64) (int64, int64, error) {
 	// Запрос на добавление данных.
 	const sqlString = `
 	SELECT
 		COUNT(CASE WHEN status = 'good' THEN 1 END) AS goods,
 		COUNT(CASE WHEN status = 'bad' THEN 1 END) AS bads
 	FROM tickets
-	WHERE tg_id = $1
+	WHERE worker_tg_id = $1
 	AND DATE(timestamp) >= CURRENT_DATE;`
 
 	// Выполнение запроса на получение данных.
-	stats, err := dbutils.GetMap(ctx, storage.db, sqlString, userID)
+	stats, err := dbutils.GetMap(ctx, storage.db, sqlString, workerID)
 	if err != nil {
 		return 0, 0, err
 	}

@@ -11,11 +11,11 @@ type UserCategorySet map[string]Empty
 
 // Тип для записей о тратах.
 type UserDataRecord struct {
-	RedcordID int64
-	UserID    int64
-	Category  string
-	Sum       float64
-	Period    time.Time
+	RecordID int64
+	UserID   int64
+	Category string
+	Sum      float64
+	Period   time.Time
 }
 
 // Типы для описания состава кнопок телеграм сообщения.

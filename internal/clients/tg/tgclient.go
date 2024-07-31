@@ -89,7 +89,7 @@ func ProcessingMessages(tgUpdate tgbotapi.Update, c *Client, msgModel *messages.
 			UserName:        tgUpdate.CallbackQuery.From.UserName,
 			UserDisplayName: strings.TrimSpace(tgUpdate.CallbackQuery.From.FirstName + " " + tgUpdate.CallbackQuery.From.LastName),
 			IsCallback:      true,
-			CallbackMsgID:   tgUpdate.CallbackQuery.InlineMessageID,
+			CallbackMsgID:   tgUpdate.CallbackQuery.Message.MessageID,
 		})
 		if err != nil {
 			logger.Error("error processing message from callback:", zap.Error(err))
@@ -177,6 +177,17 @@ func (c *Client) DeleteInlineButtons(userID int64, msgID int, sourceText string)
 	_, err := c.client.Send(msg)
 	if err != nil {
 		logger.Error("Ошибка отправки сообщения", zap.Error(err))
+		return errors.Wrap(err, "client.Send remove inline-buttons")
+	}
+
+	return nil
+}
+
+func (c *Client) DeleteMsg(userID int64, msgID int) error {
+	deleteMsg := tgbotapi.NewDeleteMessage(userID, msgID)
+	_, err := c.client.Send(deleteMsg)
+	if err != nil {
+		logger.Info("Ошибка удаления сообщения")
 		return errors.Wrap(err, "client.Send remove inline-buttons")
 	}
 

@@ -1,7 +1,7 @@
 create table if not exists users
 (
     tg_id    integer primary key,
-    limits   float not null
+    limits   float not null default 0
 );
 
 comment on table users is 'Пользователи ТГ';
@@ -54,7 +54,8 @@ create unique index if not exists workers_tg_id
 create table if not exists tickets
 (
     id       serial primary key,
-    tg_id    integer not null,
+    worker_tg_id    integer not null references workers (tg_id) on delete cascade,
+    buyer_tg_id integer not null references users (tg_id) on delete cascade,
     status   text not null default 'in_progress',
     "timestamp" timestamp not null default current_timestamp
 );

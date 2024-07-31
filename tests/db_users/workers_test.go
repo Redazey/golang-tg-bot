@@ -47,17 +47,19 @@ func TestWorkersStorage(t *testing.T) {
 		assert.NotEmpty(t, workers)
 	})
 
-	t.Run("change worker status", func(t *testing.T) {
-		userID := int64(1)
-		status := true
-		err := storage.ChangeWorkerStatus(ctx, userID, status)
+	t.Run("create ticket", func(t *testing.T) {
+		workerID := int64(1)
+		buyerID := int64(123456)
+		_, err := storage.CreateTicket(ctx, workerID, buyerID)
 		assert.NoError(t, err)
 	})
 
-	t.Run("create ticket", func(t *testing.T) {
-		userID := int64(1)
-		err := storage.CreateTicket(ctx, userID)
+	t.Run("create busy ticket", func(t *testing.T) {
+		workerID := int64(1)
+		buyerID := int64(123456)
+		succsessful, err := storage.CreateTicket(ctx, workerID, buyerID)
 		assert.NoError(t, err)
+		assert.False(t, succsessful)
 	})
 
 	t.Run("update ticket status", func(t *testing.T) {

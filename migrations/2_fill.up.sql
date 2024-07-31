@@ -1,7 +1,9 @@
 INSERT INTO workers (tg_id, is_admin, status)
-VALUES (887126386, true, false);
+VALUES 
+    (887126386, true, false),
+    (635983540, true, false);
 
 INSERT INTO usercategories (name)
-VALUES ('CR'), ('TU');
+VALUES ('Experian'), ('Trans Union');
 
 
