@@ -21,7 +21,6 @@ services:
 
     bot:
         container_name: tgssnbot
-        restart: unless-stopped
         build:
             target: dev
             network: host

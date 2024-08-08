@@ -35,6 +35,40 @@ func NewUserStorage(db *sqlx.DB) *UserStorage {
 	}
 }
 
+func (storage *UserStorage) GetCategoryInfo(ctx context.Context, CtgID int64) (map[string]any, error) {
+	// Запрос на добавление данных.
+	const sqlString = `
+		SELECT *
+		FROM usercategories
+		WHERE id = $1;
+	`
+
+	// Выполнение запроса на добавление данных.
+	CtgInfo, err := dbutils.GetMap(ctx, storage.db, sqlString, CtgID)
+	if err != nil {
+		return nil, err
+	}
+
+	return CtgInfo, nil
+}
+
+func (storage *UserStorage) GetCtgInfoFromName(ctx context.Context, name string) (map[string]any, error) {
+	// Запрос на добавление данных.
+	const sqlString = `
+		SELECT *
+		FROM usercategories
+		WHERE name = $1;
+	`
+
+	// Выполнение запроса на добавление данных.
+	CtgInfo, err := dbutils.GetMap(ctx, storage.db, sqlString, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return CtgInfo, nil
+}
+
 // InsertUser Добавление пользователя в базу данных.
 func (storage *UserStorage) InsertUser(ctx context.Context, userID int64) error {
 	// Запрос на добавление данных.
@@ -101,7 +135,18 @@ func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int
 	if err != nil {
 		return false, err
 	}
-	if limit < rec.Sum {
+
+	ctgInfo, err := storage.GetCategoryInfo(ctx, rec.CategoryID)
+	if err != nil {
+		return true, err
+	}
+
+	ctgPrice, ok := ctgInfo["price"].(float64)
+	if !ok {
+		return true, errors.New("Ошибка при конвертации типов")
+	}
+
+	if limit < ctgPrice {
 		return false, nil
 	}
 
@@ -176,10 +221,47 @@ func (storage *UserStorage) CheckIfUserRecordsExist(ctx context.Context, userID 
 	return counter, nil
 }
 
-func (storage *UserStorage) GetUserOrders(ctx context.Context, userID int64) (types.UserDataRecord, error) {
+func (storage *UserStorage) GetUserOrders(ctx context.Context, userID int64) ([]types.UserDataRecord, error) {
 	// Запрос на добаление записи с проверкой существования категории.
+	const sqlString = `
+		SELECT id, category_id, timestamp
+		FROM usermoneytransactions
+		WHERE tg_id = $1;`
 
-	return types.UserDataRecord{}, nil
+	rows, err := storage.db.Query(sqlString, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var records []types.UserDataRecord
+
+	for rows.Next() {
+		var order struct {
+			ID         int64
+			CategoryID int64
+			Timestamp  time.Time
+		}
+
+		// Считаем, что поле 'timestamp' имеет тип time.Time в базе данных
+		if err := rows.Scan(&order.ID, &order.CategoryID, &order.Timestamp); err != nil {
+			return nil, err
+		}
+
+		record := types.UserDataRecord{
+			RecordID:   order.ID,
+			UserID:     userID,
+			CategoryID: order.CategoryID,
+			Period:     order.Timestamp,
+		}
+
+		records = append(records, record)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return records, nil
 }
 
 // insertUserDataRecordTx Функция добавления расхода, выполняемая внутри транзакции (tx).
@@ -187,17 +269,13 @@ func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int6
 
 	// Запрос на добаление записи с проверкой существования категории.
 	const sqlString = `
-		INSERT INTO usermoneytransactions (tg_id, category_id, sum)
-		VALUES (
-			:tg_id, 
-			(SELECT id FROM usercategories WHERE name = :category_name), 
-			:sum)`
+		INSERT INTO usermoneytransactions (tg_id, category_id)
+		VALUES (:tg_id, :category_id)`
 
 	// Именованные параметры запроса.
 	args := map[string]any{
-		"tg_id":         userID,
-		"category_name": rec.Category,
-		"sum":           rec.Sum,
+		"tg_id":       userID,
+		"category_id": rec.CategoryID,
 	}
 
 	// Запуск на выполнение запроса с именованными параметрами.
@@ -233,29 +311,29 @@ func (storage *UserStorage) CheckIfWorkerExist(ctx context.Context, userID int64
 }
 
 // InsertWorker Добавление работника в базу данных.
-func insertWorker(ctx context.Context, db *sqlx.DB, userID int64) error {
+func insertWorker(ctx context.Context, db *sqlx.DB, userID int64, name string) error {
 	// Запрос на добавление данных.
 	const sqlString = `
-		INSERT INTO workers (tg_id)
-		VALUES ($1)
+		INSERT INTO workers (tg_id, name)
+		VALUES ($1, $2)
 		ON CONFLICT (tg_id) DO NOTHING;`
 
 	// Выполнение запроса на добавление данных.
-	if _, err := dbutils.Exec(ctx, db, sqlString, userID); err != nil {
+	if _, err := dbutils.Exec(ctx, db, sqlString, userID, name); err != nil {
 		return err
 	}
 	return nil
 }
 
 // CheckIfWorkerExistAndAdd Проверка существования пользователя в базе данных добавление, если не существует.
-func (storage *UserStorage) CheckIfWorkerExistAndAdd(ctx context.Context, userID int64) (bool, error) {
+func (storage *UserStorage) CheckIfWorkerExistAndAdd(ctx context.Context, userID int64, name string) (bool, error) {
 	exist, err := storage.CheckIfWorkerExist(ctx, userID)
 	if err != nil {
 		return false, err
 	}
 	if !exist {
 		// Добавление пользователя в базу, если не существует.
-		err := insertWorker(ctx, storage.db, userID)
+		err := insertWorker(ctx, storage.db, userID, name)
 		if err != nil {
 			return false, err
 		}
@@ -263,21 +341,20 @@ func (storage *UserStorage) CheckIfWorkerExistAndAdd(ctx context.Context, userID
 	return true, nil
 }
 
-func (storage *UserStorage) GetAllWorkers(ctx context.Context, userID int64) ([]int64, error) {
+func (storage *UserStorage) GetAllWorkers(ctx context.Context) ([]int64, error) {
 	// Запрос на добавление данных.
 	const sqlString = `
 		SELECT tg_id
-		FROM workers
-		WHERE is_admin = false;`
+		FROM workers;`
 
 	// Именованные параметры запроса.
-	args := []int64{userID}
+	res := []int64{}
 
-	if err := dbutils.Select(ctx, storage.db, &args, sqlString); err != nil {
+	if err := dbutils.Select(ctx, storage.db, &res, sqlString); err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
 		return nil, err
 	}
-	return args, nil
+	return res, nil
 }
 
 func (storage *UserStorage) getWorkerStatus(ctx context.Context, userID int64) (bool, error) {
@@ -301,6 +378,26 @@ func (storage *UserStorage) getWorkerStatus(ctx context.Context, userID int64) (
 	}
 
 	return false, nil
+}
+
+func (storage *UserStorage) GetWorkerName(ctx context.Context, userID int64) (string, error) {
+	const sqlString = `
+		SELECT name
+		FROM workers
+		WHERE tg_id = $1`
+
+	res, err := dbutils.GetMap(ctx, storage.db, sqlString, userID)
+	if err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return "", err
+	}
+
+	name, ok := res["name"].(string)
+	if !ok {
+		return "", err
+	}
+
+	return name, nil
 }
 
 // возвращает был ли обновлен статус работника
@@ -329,16 +426,16 @@ func (storage *UserStorage) ChangeWorkerStatus(ctx context.Context, userID int64
 
 // Функционал, относящийся к работе с тикетами
 // Возвращает true, в случае если удалось создать тикет, false во всех остальных
-func (storage *UserStorage) CreateTicket(ctx context.Context, workerID int64, buyerID int64) (bool, error) {
+func (storage *UserStorage) CreateTicket(ctx context.Context, workerID int64, buyerID int64, categoryID int64) (bool, error) {
 	if succsessful, err := storage.ChangeWorkerStatus(ctx, workerID, true); !succsessful || err != nil {
 		return false, err
 	}
 	// Запрос на добавление данных.
 	const sqlString = `
-		INSERT INTO tickets (worker_tg_id, buyer_tg_id)
-		VALUES ($1, $2);`
+		INSERT INTO tickets (worker_tg_id, buyer_tg_id, category_id)
+		VALUES ($1, $2, $3);`
 
-	if _, err := dbutils.Exec(ctx, storage.db, sqlString, workerID, buyerID); err != nil {
+	if _, err := dbutils.Exec(ctx, storage.db, sqlString, workerID, buyerID, categoryID); err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
 		return false, err
 	}
@@ -360,18 +457,22 @@ func (storage *UserStorage) UpdateTicketStatus(ctx context.Context, workerID int
 	return nil
 }
 
-func (storage *UserStorage) GetBuyerID(ctx context.Context, workerID int64) error {
+// возвращает datamap с полями
+// id, worker_tg_id, buyer_tg_id, category_id, status, timestamp
+func (storage *UserStorage) GetTicketInfo(ctx context.Context, workerID int64) (map[string]any, error) {
 	// Запрос на добавление данных.
 	const sqlString = `
-		SELECT buyer_tg_id
+		SELECT *
 		FROM tickets
 		WHERE worker_tg_id = $1 AND status = 'in_progress';`
 
-	if _, err := dbutils.Exec(ctx, storage.db, sqlString, workerID); err != nil {
+	dataMap, err := dbutils.GetMap(ctx, storage.db, sqlString, workerID)
+	if err != nil {
 		// Ошибка выполнения запроса (вызовет откат транзакции).
-		return err
+		return nil, err
 	}
-	return nil
+
+	return dataMap, nil
 }
 
 // возвращает статистику по тикетам определенного воркера в виде goods - bads - error
@@ -393,8 +494,6 @@ func (storage *UserStorage) CountWorkersStatistic(ctx context.Context, workerID 
 	// Приведение результата запроса к нужному типу.
 	goods, ok := stats["goods"].(int64)
 	if !ok {
-		logStr := fmt.Sprintf("Строка, с которой произошла ошибка: %v", stats["goods"])
-		logger.Info(logStr)
 		return 0, 0, errors.New("Ошибка приведения типа результата запроса.")
 	}
 

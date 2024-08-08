@@ -12,6 +12,7 @@ import (
 type Enviroment struct {
 	LoggerLevel string `env:"loggerMode" envDefault:"debug"`
 	TgToken     string `env:"TG_TOKEN,required"`
+	Dashboard   int    `env:"DASHBOARD" envDefault:"60"`
 	DB          DB
 	Redis       Redis
 	Cache       Cache
@@ -44,6 +45,7 @@ var enviroment Enviroment
 	-------GENERAL------
 	LoggerLevel string
 	TgToken     string
+	Dashboard
 	---------DB---------
 	DBUser        string
 	DBPassword    string

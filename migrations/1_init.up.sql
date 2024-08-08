@@ -13,9 +13,10 @@ create unique index if not exists users_tg_id
 create table if not exists usercategories
 (
     id      serial primary key,
-    name    text    not null
+    name    text   not null
         constraint usercategories_name_check
-            check (name <> '')
+            check (name <> ''),
+    price   float  not null
 );
 
 comment on table usercategories is 'Категории расходов';
@@ -27,9 +28,8 @@ create unique index if not exists usercategories_lower_name
 create table if not exists usermoneytransactions
 (
     id          serial primary key,
-    tg_id     integer     not null references users (tg_id) on delete cascade,
+    tg_id       integer     not null references users (tg_id) on delete cascade,
     category_id integer     not null references usercategories (id) on delete cascade,
-    sum         numeric     not null, -- (сумма в копейках)
     "timestamp" timestamp not null default current_timestamp
 );
 
@@ -42,6 +42,7 @@ create index if not exists usermoneytransactions_tg_id_period
 create table if not exists workers
 (
     tg_id    integer primary key,
+    name     text not null,
     is_admin boolean not null default false,
     status   boolean not null default false
 );
@@ -53,11 +54,12 @@ create unique index if not exists workers_tg_id
 
 create table if not exists tickets
 (
-    id       serial primary key,
+    id              serial primary key,
     worker_tg_id    integer not null references workers (tg_id) on delete cascade,
-    buyer_tg_id integer not null references users (tg_id) on delete cascade,
-    status   text not null default 'in_progress',
-    "timestamp" timestamp not null default current_timestamp
+    buyer_tg_id     integer not null references users (tg_id) on delete cascade,
+    category_id     integer not null references usercategories (id) on delete cascade,
+    status          text not null default 'in_progress',
+    "timestamp"     timestamp not null default current_timestamp
 );
 
 comment on table tickets is 'Тикеты';

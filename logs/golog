@@ -1130,3 +1130,627 @@
 {"level":"info","ts":"2024-07-31T23:48:19.862Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Trans Union"}
 {"level":"info","ts":"2024-07-31T23:48:22.314Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
 {"level":"info","ts":"2024-07-31T23:48:24.763Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Trans Union"}
+{"level":"info","ts":"2024-08-04T01:13:44.199Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:13:44.200Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:13:44.287Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:13:58.067Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] "}
+{"level":"info","ts":"2024-08-04T01:38:36.671Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:38:38.406Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:38:39.334Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T01:38:45.055Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;123123;DOB;12313"}
+{"level":"info","ts":"2024-08-04T01:38:47.380Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T01:38:47.814Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T01:38:52.713Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: goodTicket"}
+{"level":"info","ts":"2024-08-04T01:39:00.206Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:39:00.207Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:39:06.585Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:39:07.574Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:39:09.298Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:39:09.298Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:39:10.798Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: TU"}
+{"level":"info","ts":"2024-08-04T01:39:12.295Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:39:12.296Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:39:23.826Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:39:26.527Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:39:26.527Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:41:11.521Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:41:11.521Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:41:12.936Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:41:13.904Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:41:15.495Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:41:15.496Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:43:44.266Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:43:44.267Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:43:56.709Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:43:57.490Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:43:59.061Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:43:59.062Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:44:16.248Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:44:16.248Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:44:32.927Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:44:33.654Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:44:35.248Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:44:35.249Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:53:35.577Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:53:35.577Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:53:43.497Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:53:43.498Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:53:45.976Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:53:46.629Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:53:48.152Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:53:48.153Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:59:46.311Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:59:46.312Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:59:49.579Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:59:49.580Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T01:59:55.685Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T01:59:56.413Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T01:59:57.889Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T01:59:57.890Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:00:11.211Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: TU"}
+{"level":"info","ts":"2024-08-04T02:00:12.617Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:00:12.618Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:00:12.700Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: fullz"}
+{"level":"info","ts":"2024-08-04T02:00:14.229Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:00:14.230Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:00:25.319Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:00:25.320Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:00:29.894Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:00:29.895Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:00:31.633Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: fullz"}
+{"level":"info","ts":"2024-08-04T02:00:33.189Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:00:33.189Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:00:41.094Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:00:41.095Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:04:26.301Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:04:26.301Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:04:28.563Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:04:28.563Z","caller":"logger/logger.go:58","msg":"Ошибка возникла тут!"}
+{"level":"info","ts":"2024-08-04T02:04:28.563Z","caller":"logger/logger.go:58","msg":"Точно тут!"}
+{"level":"info","ts":"2024-08-04T02:05:15.077Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:05:15.078Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:05:22.476Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:05:33.626Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:05:33.627Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:05:36.462Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:05:48.084Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Support"}
+{"level":"info","ts":"2024-08-04T02:05:48.665Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T02:06:26.858Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:06:26.859Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:06:30.240Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:06:31.027Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:06:32.359Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:08:39.257Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:08:39.257Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:08:39.791Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:08:40.697Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:08:41.838Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:08:48.317Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] dsa\\"}
+{"level":"info","ts":"2024-08-04T02:08:48.318Z","caller":"logger/logger.go:58","msg":"До сюда доходим, но почему то выходи :/"}
+{"level":"info","ts":"2024-08-04T02:10:13.488Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] fds"}
+{"level":"info","ts":"2024-08-04T02:10:16.321Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-04T02:10:17.413Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:10:18.246Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:10:19.336Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:10:57.911Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:10:57.912Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:10:58.915Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:10:59.663Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:11:00.474Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:18:13.876Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:18:13.877Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:18:15.334Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:18:15.334Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:18:17.792Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:18:18.705Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:18:19.706Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:18:21.917Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] dsa"}
+{"level":"info","ts":"2024-08-04T02:18:21.918Z","caller":"logger/logger.go:58","msg":"До сюда доходим, но почему то выходи :/"}
+{"level":"info","ts":"2024-08-04T02:18:23.466Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] ds"}
+{"level":"info","ts":"2024-08-04T02:18:25.389Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-04T02:18:26.410Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:18:27.799Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:18:28.936Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:18:38.896Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;123123;DOB;12313"}
+{"level":"info","ts":"2024-08-04T02:18:38.897Z","caller":"logger/logger.go:58","msg":"До сюда доходим, но почему то выходи :/"}
+{"level":"info","ts":"2024-08-04T02:18:40.811Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T02:19:01.636Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T02:19:01.916Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T02:19:10.216Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Callback: goodTicket"}
+{"level":"info","ts":"2024-08-04T02:20:31.036Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] "}
+{"level":"info","ts":"2024-08-04T02:23:44.643Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:23:45.468Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: TU"}
+{"level":"info","ts":"2024-08-04T02:23:47.396Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy TU"}
+{"level":"info","ts":"2024-08-04T02:23:51.963Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;123123;DOB;12313"}
+{"level":"info","ts":"2024-08-04T02:23:51.963Z","caller":"logger/logger.go:58","msg":"До сюда доходим, но почему то выходи :/"}
+{"level":"info","ts":"2024-08-04T02:23:53.679Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Trans Union"}
+{"level":"info","ts":"2024-08-04T02:23:53.936Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T02:23:58.106Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-04T02:24:03.659Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:24:05.468Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:24:06.476Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:24:12.698Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;123123;DOB;12313"}
+{"level":"info","ts":"2024-08-04T02:24:12.699Z","caller":"logger/logger.go:58","msg":"До сюда доходим, но почему то выходи :/"}
+{"level":"info","ts":"2024-08-04T02:24:14.310Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T02:24:14.567Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T02:24:16.075Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: goodTicket"}
+{"level":"info","ts":"2024-08-04T02:24:29.500Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] "}
+{"level":"info","ts":"2024-08-04T02:24:35.887Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToReport"}
+{"level":"info","ts":"2024-08-04T02:51:37.129Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-04T02:51:42.080Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T02:51:42.080Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T02:51:44.271Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T02:51:45.236Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T02:51:46.203Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T02:51:52.205Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;123123;DOB;12313"}
+{"level":"info","ts":"2024-08-04T02:51:54.551Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T02:51:54.845Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T02:51:56.496Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"error","ts":"2024-08-04T02:51:56.707Z","caller":"logger/logger.go:66","msg":"error processing message from callback:","error":"run query \"\n\t\tSELECT *\n\t\tFROM tickets\n\t\tWHERE worker_tg_id = $1 AND status = 'in_progress';\" with args [887126386]: sql: no rows in result set","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:111\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-08-04T03:08:09.596Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:08:09.596Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:09:34.409Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:09:34.409Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:20:26.741Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:20:26.741Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:24:25.099Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:24:25.099Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:26:55.620Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:26:55.621Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:27:57.998Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:27:57.998Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:28:42.161Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:28:42.161Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:30:48.238Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:48.956Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.063Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.162Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.253Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.348Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.471Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.564Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.662Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.756Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.874Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:49.970Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.064Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.160Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.259Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.350Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.445Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.538Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.635Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.731Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.825Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:50.921Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:51.013Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:51.166Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:51.269Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:51.406Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:51.543Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.212Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.448Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.558Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.650Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.745Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.836Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:52.963Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.062Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.155Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.247Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.353Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.444Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.554Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.645Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.743Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.843Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:53.949Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.043Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.137Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.230Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.325Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.427Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.520Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.648Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.760Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.853Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:54.946Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.037Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.149Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.245Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.337Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.441Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.531Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.627Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.720Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.818Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:55.909Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.006Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.111Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.205Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.310Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.404Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.502Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.596Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.688Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.780Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.873Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:56.966Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.064Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.160Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.252Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.348Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.443Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.551Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.648Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.743Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.839Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:57.931Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.032Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.126Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.227Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.323Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.448Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.548Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.640Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.736Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.832Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:58.928Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.023Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.118Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.214Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.306Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.402Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.610Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.836Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:30:59.931Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.095Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.242Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.456Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.553Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.651Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.745Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.844Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:00.939Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.030Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.124Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.218Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.312Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.409Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.509Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.611Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.709Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.808Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:01.973Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.068Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.162Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.257Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.355Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.450Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.547Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.641Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.740Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.836Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:02.930Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.029Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.124Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.223Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.328Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.426Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.525Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.619Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.732Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.828Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:03.921Z","caller":"logger/logger.go:58","msg":"[Kastorides][635983540] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.019Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.111Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.209Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.329Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.426Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.519Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:31:04.611Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-04T03:32:33.777Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-04T03:32:53.975Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T03:32:54.974Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T03:32:55.885Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T03:32:57.104Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToCtg"}
+{"level":"info","ts":"2024-08-04T03:32:58.143Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T03:33:08.206Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T03:33:17.765Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;11111"}
+{"level":"error","ts":"2024-08-04T03:33:17.864Z","caller":"logger/logger.go:66","msg":"error processing message:","error":"run query \"\n\t\tSELECT *\n\t\tFROM usercategories\n\t\tWHERE id = $1;\n\t\" with args [0]: sql: no rows in result set","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:92\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-08-04T03:51:54.727Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:51:54.728Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:51:57.764Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T03:51:57.764Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T03:52:02.988Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T03:52:03.916Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T03:52:04.946Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T03:52:08.050Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;11111"}
+{"level":"info","ts":"2024-08-04T03:52:10.946Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-08-04T03:52:30.569Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] 100"}
+{"level":"info","ts":"2024-08-04T03:52:31.800Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToCtg"}
+{"level":"info","ts":"2024-08-04T03:52:32.816Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T03:52:33.902Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T03:52:38.365Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;11111"}
+{"level":"info","ts":"2024-08-04T03:52:40.556Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T03:52:40.961Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T03:52:45.849Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"error","ts":"2024-08-04T03:52:46.062Z","caller":"logger/logger.go:66","msg":"error processing message from callback:","error":"run query \"\n\t\tSELECT *\n\t\tFROM tickets\n\t\tWHERE worker_tg_id = $1 AND status = 'in_progress';\" with args [887126386]: sql: no rows in result set","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:111\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:60\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:50\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-08-04T04:03:35.548Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T04:03:35.549Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T04:03:38.982Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T04:03:38.983Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T04:03:42.346Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T04:03:43.477Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T04:03:56.425Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T04:04:01.070Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;11111"}
+{"level":"info","ts":"2024-08-04T04:04:03.998Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T04:04:04.251Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T04:04:10.094Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-04T04:04:25.611Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-04T04:04:26.770Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-04T04:04:27.690Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-04T04:04:29.844Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;11111"}
+{"level":"info","ts":"2024-08-04T04:04:31.474Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-04T04:04:31.744Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-04T04:04:33.410Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: goodTicket"}
+{"level":"info","ts":"2024-08-04T04:06:16.639Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] "}
+{"level":"info","ts":"2024-08-04T04:08:13.996Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-04T04:08:13.997Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-04T04:08:31.543Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-06T00:08:31.186Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:08:31.187Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:12:56.777Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:12:56.777Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:15:13.767Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:15:13.767Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:17:48.952Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:17:48.952Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:18:17.426Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:18:17.426Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:39:46.708Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:39:46.709Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:40:05.728Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:40:05.728Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:57:16.699Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:57:16.700Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T00:58:28.217Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T00:58:28.217Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:00:58.615Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:00:58.616Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:29:31.592Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:29:31.594Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:49:14.896Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:49:14.896Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:55:23.953Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:55:23.954Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:55:48.664Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:55:48.665Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:59:06.129Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:59:06.130Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T01:59:27.912Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T01:59:27.913Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:01:00.113Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-06T02:01:00.368Z","caller":"logger/logger.go:58","msg":"Dashboard updated!"}
+{"level":"info","ts":"2024-08-06T02:07:33.340Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-06T02:07:34.972Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-06T02:07:36.987Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToCtg"}
+{"level":"info","ts":"2024-08-06T02:07:37.960Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-06T02:07:38.833Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-06T02:07:45.540Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;111;DOB;111"}
+{"level":"info","ts":"2024-08-06T02:07:48.394Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-08-06T02:07:51.739Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] 1222"}
+{"level":"info","ts":"2024-08-06T02:07:52.631Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToCtg"}
+{"level":"info","ts":"2024-08-06T02:07:53.450Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-06T02:07:54.452Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-06T02:07:57.767Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;111;DOB;111"}
+{"level":"info","ts":"2024-08-06T02:08:00.769Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-06T02:08:01.065Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-06T02:08:05.054Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-06T02:08:21.501Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-06T02:08:22.242Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-06T02:08:35.234Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"error","ts":"2024-08-06T02:08:35.412Z","caller":"logger/logger.go:66","msg":"error processing message from callback:","error":"run query \"\n\t\tSELECT *\n\t\tFROM usercategories\n\t\tWHERE id = $1;\n\t\" with args [0]: sql: no rows in result set","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:113\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:62\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:58\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-08-06T02:08:56.195Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-06T02:08:57.414Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-06T02:08:58.415Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToCtg"}
+{"level":"info","ts":"2024-08-06T02:08:59.000Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: fullz"}
+{"level":"info","ts":"2024-08-06T02:09:00.990Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy Fullz"}
+{"level":"info","ts":"2024-08-06T02:09:04.062Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Support"}
+{"level":"info","ts":"2024-08-06T02:09:05.728Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-06T02:09:07.409Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: refills"}
+{"level":"info","ts":"2024-08-06T02:09:08.923Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-06T02:09:10.763Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: TU"}
+{"level":"info","ts":"2024-08-06T02:09:11.535Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy TU"}
+{"level":"info","ts":"2024-08-06T02:09:17.338Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;111;DOB;111"}
+{"level":"info","ts":"2024-08-06T02:15:58.915Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:15:58.917Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:16:24.709Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:16:24.709Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:23:34.511Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:23:34.511Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:25:17.532Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:25:17.533Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:35:42.166Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:35:42.167Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:40:00.486Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:40:00.486Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:42:14.329Z","caller":"logger/logger.go:58","msg":"Dashboard updated!3"}
+{"level":"info","ts":"2024-08-06T02:42:14.329Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:42:14.330Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:42:50.323Z","caller":"logger/logger.go:58","msg":"Dashboard updated!"}
+{"level":"info","ts":"2024-08-06T02:42:50.324Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:42:50.324Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:43:40.411Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:43:40.411Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T02:46:49.029Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T02:46:49.030Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-06T12:59:15.482Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-06T12:59:15.521Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T22:51:11.770Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T22:51:11.772Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T22:52:44.223Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T22:52:44.224Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T22:54:49.017Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T22:54:49.018Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T22:54:49.090Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"error","ts":"2024-08-07T22:54:49.091Z","caller":"logger/logger.go:66","msg":"Failed to get updates","error":"Bad Request: message identifier is not specified - client.Send delete message","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:96"}
+{"level":"info","ts":"2024-08-07T22:54:59.173Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"error","ts":"2024-08-07T22:54:59.173Z","caller":"logger/logger.go:66","msg":"Failed to get updates","error":"Bad Request: message identifier is not specified - client.Send delete message","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:96"}
+{"level":"info","ts":"2024-08-07T22:55:51.454Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T22:55:51.454Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T22:56:01.719Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"error","ts":"2024-08-07T22:56:01.719Z","caller":"logger/logger.go:66","msg":"Failed to get updates","error":"json: cannot unmarshal bool into Go value of type tgbotapi.Message - client.Send delete message","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:106"}
+{"level":"info","ts":"2024-08-07T22:56:11.988Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"error","ts":"2024-08-07T22:56:11.988Z","caller":"logger/logger.go:66","msg":"Failed to get updates","error":"json: cannot unmarshal bool into Go value of type tgbotapi.Message - client.Send delete message","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:106"}
+{"level":"info","ts":"2024-08-07T22:56:22.289Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"error","ts":"2024-08-07T22:56:22.289Z","caller":"logger/logger.go:66","msg":"Failed to get updates","error":"json: cannot unmarshal bool into Go value of type tgbotapi.Message - client.Send delete message","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:106"}
+{"level":"info","ts":"2024-08-07T23:02:23.475Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:02:23.475Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:02:33.758Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:02:44.041Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:02:54.298Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:03:04.545Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:03:14.862Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:03:17.877Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-07T23:03:18.775Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-07T23:03:19.722Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-07T23:03:20.657Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-07T23:03:25.177Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:03:27.580Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;1111"}
+{"level":"info","ts":"2024-08-07T23:03:30.781Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-07T23:03:31.096Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:03:35.416Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-07T23:03:35.524Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:03:42.388Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:03:45.801Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:13:30.941Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:13:30.942Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:14:23.789Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:14:23.791Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"error","ts":"2024-08-07T23:14:23.799Z","caller":"logger/logger.go:66","msg":"Ошибка при инициализации дэшборда: ","error":"run query \"\n\tSELECT\n\t\tCOUNT(CASE WHEN status = 'good' THEN 1 END) AS goods,\n\t\tCOUNT(CASE WHEN status = 'bad' THEN 1 END) AS bads\n\tFROM tickets\n\tWHERE DATE(timestamp) >= CURRENT_DATE;\" with args [1]: expected 0 arguments, got 1","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Dashboard\n\t/app/internal/model/dashboard/dashboard.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:94"}
+{"level":"error","ts":"2024-08-07T23:14:23.799Z","caller":"logger/logger.go:66","msg":"Ошибка при инициализации дэшборда: ","error":"run query \"\n\tSELECT\n\t\tCOUNT(CASE WHEN status = 'good' THEN 1 END) AS goods,\n\t\tCOUNT(CASE WHEN status = 'bad' THEN 1 END) AS bads\n\tFROM tickets\n\tWHERE DATE(timestamp) >= CURRENT_DATE;\" with args [2]: expected 0 arguments, got 1","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/model/dashboard.(*Model).Dashboard\n\t/app/internal/model/dashboard/dashboard.go:66\ntgssn/internal/model/dashboard.(*Model).Init.func1\n\t/app/internal/model/dashboard/dashboard.go:94"}
+{"level":"info","ts":"2024-08-07T23:15:13.268Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:15:13.270Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:16:13.535Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:17:04.541Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:17:04.541Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:18:04.807Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:18:24.120Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:18:24.121Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:32:47.275Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:32:47.276Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:32:59.391Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:33:00.035Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-07T23:33:01.190Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-07T23:33:02.202Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-07T23:33:09.161Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;1111"}
+{"level":"info","ts":"2024-08-07T23:33:11.594Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-07T23:33:12.069Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:33:17.896Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:33:22.922Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-07T23:33:24.357Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:33:45.442Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:33:45.443Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:33:50.754Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:33:51.403Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-07T23:33:52.302Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: TU"}
+{"level":"info","ts":"2024-08-07T23:33:54.786Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;1111"}
+{"level":"info","ts":"2024-08-07T23:33:56.239Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy TU"}
+{"level":"info","ts":"2024-08-07T23:33:57.312Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;1111"}
+{"level":"info","ts":"2024-08-07T23:33:59.115Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Trans Union"}
+{"level":"info","ts":"2024-08-07T23:33:59.428Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:34:02.415Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:34:48.343Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-07T23:34:50.160Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:34:54.520Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-07T23:34:59.400Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-07T23:34:59.401Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-07T23:35:05.909Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"error","ts":"2024-08-07T23:35:06.171Z","caller":"logger/logger.go:66","msg":"Ошибка отправки сообщения","error":"Bad Request: message to edit not found","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.(*Client).EditInlineButtons\n\t/app/internal/clients/tg/tgclient.go:186\ntgssn/internal/model/messages.CallbacksCommands\n\t/app/internal/model/messages/callbacksCommands.go:32\ntgssn/internal/model/messages.(*Model).IncomingMessage\n\t/app/internal/model/messages/incoming.go:98\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:104\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:62\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:55\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"error","ts":"2024-08-07T23:35:06.172Z","caller":"logger/logger.go:66","msg":"error processing message from callback:","error":"Bad Request: message to edit not found - client.Send with inline-buttons","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:113\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:62\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:55\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-08-07T23:35:07.039Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-07T23:35:07.804Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-07T23:35:08.763Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-07T23:35:11.825Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;1111"}
+{"level":"info","ts":"2024-08-07T23:35:13.370Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-07T23:35:13.661Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:35:16.465Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-07T23:35:19.095Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:35:23.620Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-07T23:35:24.441Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: CR"}
+{"level":"info","ts":"2024-08-07T23:35:25.215Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: buy CR"}
+{"level":"info","ts":"2024-08-07T23:35:27.512Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Full name;address;city;state;11111;DOB;1111"}
+{"level":"info","ts":"2024-08-07T23:35:29.508Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-07T23:35:31.604Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: takeTicket:887126386:Experian"}
+{"level":"info","ts":"2024-08-07T23:35:32.022Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-07T23:35:34.132Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: badTicket"}
+{"level":"info","ts":"2024-08-07T23:35:35.390Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: refill"}
+{"level":"info","ts":"2024-08-07T23:35:36.475Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToProfile"}
+{"level":"info","ts":"2024-08-07T23:35:39.589Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T00:34:59.501Z","caller":"logger/logger.go:58","msg":"Ошибка удаления сообщения"}
+{"level":"info","ts":"2024-08-08T06:51:32.049Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T06:51:32.050Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T06:51:42.797Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-08T06:51:54.442Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T06:51:54.443Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T06:54:05.474Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T06:54:05.474Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T06:54:13.163Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-08T07:00:31.503Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:00:31.503Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:00:33.871Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] /start"}
+{"level":"info","ts":"2024-08-08T07:00:35.322Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Categories"}
+{"level":"info","ts":"2024-08-08T07:00:37.407Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T07:00:39.342Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:00:44.227Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:00:46.730Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"info","ts":"2024-08-08T07:00:47.666Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:00:48.613Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:06:31.808Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:06:31.808Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:06:36.425Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T07:06:37.999Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:07:02.333Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:07:07.380Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToProfile"}
+{"level":"info","ts":"2024-08-08T07:07:08.866Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:07:10.693Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:07:12.131Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"info","ts":"2024-08-08T07:07:14.501Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:07:15.857Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:09:16.822Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:09:16.822Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:09:16.903Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"error","ts":"2024-08-08T07:09:17.095Z","caller":"logger/logger.go:66","msg":"Ошибка Request callback:","error":"Bad Request: query is too old and response timeout expired or query ID is invalid","stacktrace":"tgssn/pkg/logger.Error\n\t/app/pkg/logger/logger.go:66\ntgssn/internal/clients/tg.ProcessingMessages\n\t/app/internal/clients/tg/tgclient.go:102\ntgssn/internal/clients/tg.HandlerFunc.RunFunc\n\t/app/internal/clients/tg/tgclient.go:20\ntgssn/internal/clients/tg.(*Client).ListenUpdates\n\t/app/internal/clients/tg/tgclient.go:62\ntgssn/internal/pkg/bot.(*App).Run\n\t/app/internal/pkg/bot/bot.go:55\nmain.main\n\t/app/cmd/main/main.go:13\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:271"}
+{"level":"info","ts":"2024-08-08T07:09:50.845Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:09:50.845Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:09:50.923Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T07:09:51.123Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T07:09:54.814Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:09:56.610Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:09:58.560Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:10:02.119Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:15:37.095Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:15:37.095Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:15:37.781Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T07:15:39.067Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:15:42.949Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:17:43.507Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:17:44.579Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"info","ts":"2024-08-08T07:17:45.361Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"info","ts":"2024-08-08T07:17:48.531Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:17:50.326Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:19:21.914Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:19:21.915Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:19:56.269Z","caller":"logger/logger.go:58","msg":"Запуск бота"}
+{"level":"info","ts":"2024-08-08T07:19:56.269Z","caller":"logger/logger.go:58","msg":"Start listening for tg messages"}
+{"level":"info","ts":"2024-08-08T07:20:02.420Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Profile"}
+{"level":"info","ts":"2024-08-08T07:20:03.733Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:20:04.899Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:20:06.284Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:20:11.037Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"info","ts":"2024-08-08T07:20:13.258Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageBack"}
+{"level":"info","ts":"2024-08-08T07:20:15.246Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}
+{"level":"info","ts":"2024-08-08T07:20:16.459Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: backToProfile"}
+{"level":"info","ts":"2024-08-08T07:20:19.002Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: orders"}
+{"level":"info","ts":"2024-08-08T07:20:22.074Z","caller":"logger/logger.go:58","msg":"[RedaxelF][887126386] Callback: pageForward"}

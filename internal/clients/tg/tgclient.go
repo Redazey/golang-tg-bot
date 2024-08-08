@@ -37,14 +37,16 @@ func New(tokenStr string, handlerProcessingFunc HandlerFunc) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) SendMessage(text string, userID int64) error {
+func (c *Client) SendMessage(text string, userID int64) (int, error) {
 	msg := tgbotapi.NewMessage(userID, text)
 	msg.ParseMode = "markdown"
-	_, err := c.client.Send(msg)
+
+	msgSended, err := c.client.Send(msg)
 	if err != nil {
-		return errors.Wrap(err, "Ошибка отправки сообщения client.Send")
+		return 0, errors.Wrap(err, "Ошибка отправки сообщения client.Send")
 	}
-	return nil
+
+	return msgSended.MessageID, nil
 }
 
 func (c *Client) ListenUpdates(msgModel *messages.Model) {
@@ -66,16 +68,32 @@ func (c *Client) ListenUpdates(msgModel *messages.Model) {
 func ProcessingMessages(tgUpdate tgbotapi.Update, c *Client, msgModel *messages.Model) {
 	if tgUpdate.Message != nil {
 		// Пользователь написал текстовое сообщение.
+		var msg messages.Message
+		if tgUpdate.Message.Document != nil {
+			msg = messages.Message{
+				Text:            tgUpdate.Message.Text,
+				MessageID:       int(tgUpdate.Message.MessageID),
+				IsDocument:      true,
+				UserID:          tgUpdate.Message.From.ID,
+				UserName:        tgUpdate.Message.From.UserName,
+				UserDisplayName: strings.TrimSpace(tgUpdate.Message.From.FirstName + " " + tgUpdate.Message.From.LastName),
+			}
+		} else {
+			msg = messages.Message{
+				Text:            tgUpdate.Message.Text,
+				MessageID:       int(tgUpdate.Message.MessageID),
+				UserID:          tgUpdate.Message.From.ID,
+				UserName:        tgUpdate.Message.From.UserName,
+				UserDisplayName: strings.TrimSpace(tgUpdate.Message.From.FirstName + " " + tgUpdate.Message.From.LastName),
+			}
+		}
+
 		logger.Info(fmt.Sprintf("[%s][%v] %s", tgUpdate.Message.From.UserName, tgUpdate.Message.From.ID, tgUpdate.Message.Text))
-		err := msgModel.IncomingMessage(messages.Message{
-			Text:            tgUpdate.Message.Text,
-			UserID:          tgUpdate.Message.From.ID,
-			UserName:        tgUpdate.Message.From.UserName,
-			UserDisplayName: strings.TrimSpace(tgUpdate.Message.From.FirstName + " " + tgUpdate.Message.From.LastName),
-		})
+		err := msgModel.IncomingMessage(msg)
 		if err != nil {
 			logger.Error("error processing message:", zap.Error(err))
 		}
+
 	} else if tgUpdate.CallbackQuery != nil {
 		// Пользователь нажал кнопку.
 		logger.Info(fmt.Sprintf("[%s][%v] Callback: %s", tgUpdate.CallbackQuery.From.UserName, tgUpdate.CallbackQuery.From.ID, tgUpdate.CallbackQuery.Data))
@@ -183,12 +201,20 @@ func (c *Client) DeleteInlineButtons(userID int64, msgID int, sourceText string)
 	return nil
 }
 
-func (c *Client) DeleteMsg(userID int64, msgID int) error {
+func (c *Client) DeleteMsg(userID int64, msgID int) {
 	deleteMsg := tgbotapi.NewDeleteMessage(userID, msgID)
 	_, err := c.client.Send(deleteMsg)
 	if err != nil {
 		logger.Info("Ошибка удаления сообщения")
-		return errors.Wrap(err, "client.Send remove inline-buttons")
+	}
+}
+
+func (c *Client) ReplyMessage(FromUserID int64, ToUserID int64, msgID int) error {
+	replyMsg := tgbotapi.NewCopyMessage(ToUserID, FromUserID, msgID)
+	_, err := c.client.Send(replyMsg)
+	if err != nil {
+		logger.Info("Ошибка пересылки сообщения")
+		return errors.Wrap(err, "client.Send copy message")
 	}
 
 	return nil

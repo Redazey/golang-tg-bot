@@ -1,9 +1,9 @@
-INSERT INTO workers (tg_id, is_admin, status)
+INSERT INTO workers (tg_id, name, is_admin, status)
 VALUES 
-    (887126386, true, false),
-    (635983540, true, false);
+    (887126386, 'Reda', true, false),
+    (635983540, 'Tvou Drug/s 💙💛', true, false);
 
-INSERT INTO usercategories (name)
-VALUES ('Experian'), ('Trans Union');
+INSERT INTO usercategories (name, price)
+VALUES ('Experian', 8), ('Trans Union', 11), ('test_category', 100000);
 
 

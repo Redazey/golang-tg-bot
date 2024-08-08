@@ -1,6 +1,8 @@
 package messages
 
-import types "tgssn/internal/model/bottypes"
+import (
+	types "tgssn/internal/model/bottypes"
+)
 
 // Команды стартовых действий.
 var BtnStart = types.TgKbRowButtons{
@@ -61,6 +63,10 @@ var BackToCtgBtn = []types.TgRowButtons{
 	},
 }
 
+// Кнопки для истории заказов
+var BtnOrderBack = types.TgInlineButton{DisplayName: "Back", Value: "pageBack"}
+var BtnOrderForward = types.TgInlineButton{DisplayName: "Forward", Value: "pageForward"}
+
 // Кнопки для вкладки профиль
 var BtnProfile = []types.TgRowButtons{
 	{
@@ -113,6 +119,7 @@ func CreateInlineButtons(DisplayName string, value string) []types.TgRowButtons 
 // Область "Константы и переменные": начало.
 
 const (
+	OrdersInPage  = 3
 	WorkersChatID = -1002171174434
 	TxtStart      = "Hello, %v 👋.This is a bot for Experian and Trans union reports (cr,tu)"
 	TxtCtgs       = "📰 Choose a category that interests you:"
@@ -140,10 +147,15 @@ const (
 	TxtError              = "Unexcepted error occured! Please contact support"
 	TxtBusyWorker         = "У тебя уже есть тикет, принимайся за новый, только когда закончишь со старым!"
 	TxtBadTicket          = "Тикет закрыт как bad, не расстраивайся ❤️\n (Если такое происходит подозрительно часто - пиши админу)"
+	TxtBadTicketUsr       = "Sorry! We are unable to find information based on your data in category %v, the money (%v$) will be refunded ❗️"
+	TxtSendFile           = "Отправь файл с репортом для закрытия тикета 😉"
+	TxtBadFile            = "Отправь именно файл, хватит тестировать систему на прочность! 💢💢💢"
 	TxtGoodTicket         = "Тикет закрыт как good, прекрасная работа! ❤️"
 	TxtErrorTicketUpd     = "Ой! Произошла ошибка при обновлении состояния тикета, срочно пишите администратору 😱!"
 	TxtForWorkers         = "❗️ Пришел тикет на %v репорт! ❗️"
 	TxtToWorker           = "Ты взял тикет на %v репорт! Партия гордится тобой!\nВот данные, которые прикрепил пользователь:\n%v"
-	TxtOrderHistory       = "💡 Order № %v\n🕐 Date %v\n📁 Category %v\n💰 Sum %v\n➖➖➖➖➖➖➖➖➖➖➖➖"
+	TxtOrderHistory       = "💡 Order № %v\n🕐 Date: %v\n📁 Category: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
 	TxtHelp               = "This is a bot for Experian and Trans union reports (cr,tu). Enter /start"
+	TxtDashboard          = "Статистика на сегодня:\n%v"
+	TxtDashboardStats     = "Работник: %v\nЗаказы: %v ✅| %v ❌\n➖➖➖➖➖➖➖➖\n"
 )

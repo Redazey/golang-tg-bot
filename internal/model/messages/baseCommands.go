@@ -63,7 +63,8 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 		return true, nil
 	case "/help":
 		s.lastInlineKbMsg[msg.UserID] = 0
-		return true, s.tgClient.SendMessage(TxtHelp, msg.UserID)
+		_, err := s.tgClient.SendMessage(TxtHelp, msg.UserID)
+		return true, err
 	}
 
 	// Команда не распознана.

@@ -21,7 +21,7 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 		if lastUserCommand == "refill" {
 			userInput, err := strconv.Atoi(msg.Text)
 			if err != nil || userInput == 0 {
-				if err := s.tgClient.SendMessage(TxtPaymentNotInt, msg.UserID); err != nil {
+				if _, err := s.tgClient.SendMessage(TxtPaymentNotInt, msg.UserID); err != nil {
 					return true, err
 				}
 				return true, errors.Wrap(err, "Пользователь ввёл неверное значение")
@@ -33,11 +33,12 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 				return true, errors.Wrap(err, "Ошибка при переводе средств")
 
 			} else if !paymentState {
-				return true, s.tgClient.SendMessage(TxtPaymentNotEnough, msg.UserID)
+				_, err := s.tgClient.SendMessage(TxtPaymentNotEnough, msg.UserID)
+				return true, err
 			}
 
 			s.storage.AddUserLimit(ctx, msg.UserID, float64(userInput))
-			s.lastUserCommand[msg.UserID] = ""
+
 			if s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
 				TxtPaymentSuccsessful,
 				BackToCtgBtn,
@@ -49,31 +50,30 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 
 		} else if strings.Contains(lastUserCommand, "buy") {
 			var err error
+			var ctgInfo map[string]any
 			var ctgName string
-			var price float64
 
 			if lastUserCommand == "buy TU" {
 				ctgName = "Trans Union"
-				price = 8
-
-			} else if lastUserCommand == "buy CR" {
-				ctgName = "Experian"
-				price = 8
-
-			}
-
-			if succsessful, err := s.storage.InsertUserDataRecord(ctx, msg.UserID, bottypes.UserDataRecord{
-				UserID:   msg.UserID,
-				Category: ctgName,
-				Sum:      price,
-			}); err != nil {
-				if err := s.tgClient.SendMessage(TxtError, msg.UserID); err != nil {
+				if ctgInfo, err = s.storage.GetCtgInfoFromName(ctx, ctgName); err != nil {
 					return true, err
 				}
 
+			} else if lastUserCommand == "buy CR" {
+				ctgName = "Experian"
+				if ctgInfo, err = s.storage.GetCtgInfoFromName(ctx, ctgName); err != nil {
+					return true, err
+				}
+			}
+
+			if succsessful, err := s.storage.InsertUserDataRecord(ctx, msg.UserID, bottypes.UserDataRecord{
+				UserID:     msg.UserID,
+				CategoryID: ctgInfo["id"].(int64),
+			}); err != nil {
+				s.tgClient.SendMessage(TxtError, msg.UserID)
 				return true, err
+
 			} else if !succsessful {
-				s.lastUserCommand[msg.UserID] = ""
 				if s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
 					TxtPaymentNotEnough,
 					BtnRefill,
@@ -85,10 +85,8 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 				return true, nil
 			}
 
-			s.lastUserCommand[msg.UserID] = ""
-
 			if isValidDataInput(msg.Text) {
-				s.lastUserTicket[msg.UserID] = msg.Text
+				s.lastUserInteraction[msg.UserID].command = msg.Text
 			} else {
 				s.tgClient.SendMessage(TxtWrongTicketFormat, msg.UserID)
 				return true, nil
@@ -106,21 +104,44 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 				return true, err
 			}
 
-			return true, s.tgClient.SendMessage(TxtTicketInProccess, msg.UserID)
+			if err = s.storage.AddUserLimit(ctx, msg.UserID, -ctgInfo["price"].(float64)); err != nil {
+				return true, err
+			}
+
+			_, err = s.tgClient.SendMessage(TxtTicketInProccess, msg.UserID)
+
+			return true, err
 
 		} else if lastUserCommand == "goodTicket" {
-			if err := s.storage.UpdateTicketStatus(ctx, msg.UserID, "good"); err != nil {
-				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-				return true, err
+
+			if msg.IsDocument {
+				ticketInfo, err := s.storage.GetTicketInfo(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				buyerID, ok := ticketInfo["buyer_tg_id"].(int64)
+				if !ok {
+					return true, err
+				}
+
+				if err := s.tgClient.ReplyMessage(msg.UserID, buyerID, msg.MessageID); err != nil {
+					return true, err
+				}
+
+				if err := s.storage.UpdateTicketStatus(ctx, msg.UserID, "good"); err != nil {
+					s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
+					return true, err
+				}
+
+				if _, err := s.storage.ChangeWorkerStatus(ctx, msg.UserID, false); err != nil {
+					s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
+					return true, err
+				}
+
+				return true, nil
 			}
-
-			if _, err := s.storage.ChangeWorkerStatus(ctx, msg.UserID, false); err != nil {
-				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-				return true, err
-			}
-
-			s.lastUserCommand[msg.UserID] = ""
-
+			s.tgClient.SendMessage(TxtBadFile, msg.UserID)
 			return true, nil
 		}
 	}
