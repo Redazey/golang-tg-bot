@@ -4,9 +4,10 @@ import (
 	"context"
 	"tgssn/config"
 	"tgssn/internal/clients/tg"
-	"tgssn/internal/model/dashboard"
 	userStorage "tgssn/internal/model/db"
 	"tgssn/internal/model/messages"
+	"tgssn/internal/services/dashboard"
+	"tgssn/internal/services/payment"
 	"tgssn/pkg/db"
 	"tgssn/pkg/logger"
 )
@@ -15,6 +16,7 @@ type App struct {
 	tgClient  *tg.Client
 	storage   *userStorage.UserStorage
 	msgModel  *messages.Model
+	payment   *payment.Model
 	dashboard *dashboard.Model
 }
 
@@ -41,10 +43,12 @@ func Init() (*App, error) {
 	}
 
 	a.storage = userStorage.NewUserStorage(db.GetDBConn())
-	a.msgModel = messages.New(ctx, a.tgClient, a.storage)
 	a.dashboard = dashboard.New(ctx, a.tgClient, a.storage, cfg)
+	a.payment = payment.New(ctx, a.storage, a.tgClient, cfg.PaymentToken)
+	a.msgModel = messages.New(ctx, a.tgClient, a.storage, a.payment, cfg)
 
 	a.dashboard.Init()
+	a.payment.Init()
 
 	return a, nil
 }

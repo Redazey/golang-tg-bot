@@ -2,13 +2,16 @@ package messages
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 	"tgssn/internal/model/bottypes"
 	"tgssn/pkg/errors"
+	"tgssn/pkg/logger"
 
 	"github.com/opentracing/opentracing-go"
+	"go.uber.org/zap"
 )
 
 // callbacks
@@ -58,12 +61,12 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 
 		} else if strings.Contains(msg.Text, "buy") {
 			if msg.Text == "buy TU" {
-				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, BackToCtgBtn)
+				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, []bottypes.TgRowButtons{{BackToCtgBtn}})
 				s.lastUserInteraction[msg.UserID].command = "buy TU"
 				return true, nil
 
 			} else if msg.Text == "buy CR" {
-				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, BackToCtgBtn)
+				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, []bottypes.TgRowButtons{{BackToCtgBtn}})
 				s.lastUserInteraction[msg.UserID].command = "buy CR"
 				return true, nil
 
@@ -102,7 +105,12 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 
 		} else if msg.Text == "refill" {
 			s.lastUserInteraction[msg.UserID].command = "refill"
-			return true, s.tgClient.EditInlineButtons(TxtPaymentQuestion, s.lastInlineKbMsg[msg.UserID], msg.UserID, BackToProfileBtn)
+			return true, s.tgClient.EditInlineButtons(
+				TxtPaymentQuestion,
+				s.lastInlineKbMsg[msg.UserID],
+				msg.UserID,
+				[]bottypes.TgRowButtons{{BackToProfileBtn}},
+			)
 
 		} else if msg.Text == "orders" {
 			if s.lastUserInteraction[msg.UserID].ordersPages == nil {
@@ -126,8 +134,114 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				txtPage,
 				s.lastInlineKbMsg[msg.UserID],
 				msg.UserID,
-				[]bottypes.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn[0][0]}},
+				[]bottypes.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn}},
 			)
+
+		} else if msg.Text == "deleteInvoice" {
+			body, err := s.payment.CryptoPayRequest(
+				s.ctx, "deleteInvoice",
+				DeleteInvoiceRequest{InvoiceID: s.lastUserInteraction[msg.UserID].paymentID},
+			)
+			if err != nil {
+				logger.Error("Failed to delete invoice", zap.Error(err))
+
+				return true, err
+			}
+
+			var result bool
+			if err = json.Unmarshal(body, &result); err != nil {
+				logger.Debug("Error while unmarshaling message")
+
+				return true, err
+			}
+
+			if !result {
+				logger.Info("Failed to delete invoice")
+
+				return true, err
+			}
+
+			if err = s.storage.DeleteRefillRecord(ctx, s.lastUserInteraction[msg.UserID].paymentID); err != nil {
+				return true, err
+			}
+
+			return true, s.tgClient.EditInlineButtons(
+				TxtPaymentCanceled,
+				s.lastInlineKbMsg[msg.UserID],
+				msg.UserID,
+				[]bottypes.TgRowButtons{{BackToProfileBtn}},
+			)
+
+		} else if strings.Contains(strings.Join(PaymentMethods, " "), msg.Text) {
+			amount := s.lastUserInteraction[msg.UserID].paymentVal
+			if amount == 0 {
+				if _, err = s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
+					return true, err
+				}
+
+				balance, err := s.storage.GetUserLimit(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				orders, err := s.storage.CheckIfUserRecordsExist(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				err = s.tgClient.EditInlineButtons(
+					fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
+					s.lastInlineKbMsg[msg.UserID],
+					msg.UserID,
+					BtnProfile,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				return true, nil
+			}
+
+			invoiceReq := CreateInvoiceRequest{
+				CurrencyType: "fiat",
+				Asset:        msg.Text,
+				Fiat:         "USD",
+				Amount:       s.lastUserInteraction[msg.UserID].paymentVal,
+				Description:  fmt.Sprintf(TxtRefillDesc, s.lastUserInteraction[msg.UserID].paymentVal, msg.Text),
+				Payload:      fmt.Sprintf("%v", msg.UserID),
+				Expires:      s.cfg.PaymentEX,
+			}
+
+			body, err := s.payment.CryptoPayRequest(ctx, "createInvoice", invoiceReq)
+			if err != nil {
+				s.tgClient.SendMessage(TxtPaymentErr, msg.UserID)
+				return true, errors.Wrap(err, "Ошибка при переводе средств")
+
+			}
+
+			var paymentState Invoice
+
+			err = json.Unmarshal(body, &paymentState)
+			if err != nil {
+				return true, err
+			}
+
+			s.lastUserInteraction[msg.UserID].paymentID = paymentState.InvoiceID
+			BtnRefillRequest[0][0].URL = paymentState.BotInvoiceURL
+
+			if err = s.storage.InsertUserRefillRecord(ctx, msg.UserID, paymentState.InvoiceID, amount); err != nil {
+				return true, err
+			}
+
+			if s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
+				TxtRefillReqCreated,
+				BtnRefillRequest,
+				msg.UserID,
+			); err != nil {
+				return true, err
+			}
+
+			return true, nil
 
 		} else if msg.Text == "pageBack" {
 			if s.lastUserInteraction[msg.UserID].ordersPages == nil {
@@ -153,9 +267,9 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			}
 
 			if page == 0 {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn[0][0]}}
+				btnOrders = []bottypes.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn}}
 			} else {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn[0][0]}}
+				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn}}
 			}
 
 			return true, s.tgClient.EditInlineButtons(
@@ -189,9 +303,9 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			}
 
 			if page+OrdersInPage >= len(orders) {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack}, {BackToProfileBtn[0][0]}}
+				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack}, {BackToProfileBtn}}
 			} else {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn[0][0]}}
+				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn}}
 			}
 
 			return true, s.tgClient.EditInlineButtons(

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"tgssn/cmd/payment"
 	"tgssn/internal/model/bottypes"
 	"tgssn/pkg/errors"
 	"tgssn/pkg/logger"
@@ -27,26 +26,15 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 				return true, errors.Wrap(err, "Пользователь ввёл неверное значение")
 			}
 
-			p := payment.New(ctx, s.storage)
-			if paymentState, err := p.MockPay(int64(userInput)); err != nil {
-				s.tgClient.SendMessage(TxtPaymentErr, msg.UserID)
-				return true, errors.Wrap(err, "Ошибка при переводе средств")
+			s.lastUserInteraction[msg.UserID].paymentVal = float64(userInput)
 
-			} else if !paymentState {
-				_, err := s.tgClient.SendMessage(TxtPaymentNotEnough, msg.UserID)
-				return true, err
+			var btns []bottypes.TgRowButtons
+			btns = append(btns, bottypes.TgRowButtons{BackToProfileBtn})
+			for _, method := range PaymentMethods {
+				btns = append(btns, bottypes.TgRowButtons{bottypes.TgInlineButton{DisplayName: method, Value: method}})
 			}
 
-			s.storage.AddUserLimit(ctx, msg.UserID, float64(userInput))
-
-			if s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
-				TxtPaymentSuccsessful,
-				BackToCtgBtn,
-				msg.UserID,
-			); err != nil {
-				return true, err
-			}
-			return true, nil
+			return true, s.tgClient.EditInlineButtons(TxtPaymentQuestion, s.lastInlineKbMsg[msg.UserID], msg.UserID, btns)
 
 		} else if strings.Contains(lastUserCommand, "buy") {
 			var err error

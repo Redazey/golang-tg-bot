@@ -10,12 +10,14 @@ import (
 
 // Файл переменных окружения
 type Enviroment struct {
-	LoggerLevel string `env:"loggerMode" envDefault:"debug"`
-	TgToken     string `env:"TG_TOKEN,required"`
-	Dashboard   int    `env:"DASHBOARD" envDefault:"60"`
-	DB          DB
-	Redis       Redis
-	Cache       Cache
+	LoggerLevel  string `env:"loggerMode" envDefault:"debug"`
+	TgToken      string `env:"TG_TOKEN,required"`
+	Dashboard    int    `env:"DASHBOARD" envDefault:"60"`
+	PaymentToken string `env:"PAYMENT_TOKEN,required"`
+	PaymentEX    int    `env:"PAYMENT_EX_TIME" envDefault:"3600"`
+	DB           DB
+	Redis        Redis
+	Cache        Cache
 }
 
 type DB struct {

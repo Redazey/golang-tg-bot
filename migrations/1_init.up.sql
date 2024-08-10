@@ -39,6 +39,22 @@ comment on table usermoneytransactions is 'Записи пользователе
 create index if not exists usermoneytransactions_tg_id_period
     on usermoneytransactions (tg_id, "timestamp");
 
+create table if not exists userrefills
+(
+    id          serial    primary key,
+    tg_id       integer   not null references users (tg_id) on delete cascade,
+    invoice_id  integer   not null,
+    status      text      not null default 'active',
+    amount      float     not null,
+    "timestamp" timestamp not null default current_timestamp
+);
+
+comment on table usermoneytransactions is 'Записи пользователей о пополнениях';
+
+-- Индекс по пользователю и времени операции для ускорения поиска записей за определенный период.
+create index if not exists userrefills_tg_id_period
+    on userrefills (tg_id, "timestamp");
+
 create table if not exists workers
 (
     tg_id    integer primary key,

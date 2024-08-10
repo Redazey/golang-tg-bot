@@ -151,7 +151,11 @@ func (c *Client) ShowInlineButtons(text string, buttons []types.TgRowButtons, us
 		keyboard[i] = make([]tgbotapi.InlineKeyboardButton, len(tgRowButtons))
 		for j := 0; j < len(tgRowButtons); j++ {
 			tgInlineButton := tgRowButtons[j]
-			keyboard[i][j] = tgbotapi.NewInlineKeyboardButtonData(tgInlineButton.DisplayName, tgInlineButton.Value)
+			if tgInlineButton.URL != "" {
+				keyboard[i][j] = tgbotapi.NewInlineKeyboardButtonURL(tgInlineButton.DisplayName, tgInlineButton.URL)
+			} else {
+				keyboard[i][j] = tgbotapi.NewInlineKeyboardButtonData(tgInlineButton.DisplayName, tgInlineButton.Value)
+			}
 		}
 	}
 	var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(keyboard...)

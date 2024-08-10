@@ -505,3 +505,89 @@ func (storage *UserStorage) CountWorkersStatistic(ctx context.Context, workerID 
 	}
 	return goods, bads, nil
 }
+
+// insertUserRefillRecordTx Функция добавления расхода, выполняемая внутри транзакции (tx).
+func insertUserRefillRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int64, invoiceID int64, amount float64) error {
+	// Запрос на добаление записи с проверкой существования категории.
+	const sqlString = `
+		INSERT INTO userrefills (tg_id, invoice_id, amount)
+		VALUES (:tg_id, :invoice_id, :amount)`
+
+	// Именованные параметры запроса.
+	args := map[string]any{
+		"tg_id":      userID,
+		"invoice_id": invoiceID,
+		"amount":     amount,
+	}
+
+	// Запуск на выполнение запроса с именованными параметрами.
+	if _, err := dbutils.NamedExec(ctx, tx, sqlString, args); err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return err
+	}
+
+	return nil
+}
+
+// InsertUserRefillRecord Добавление записи о расходах пользователя (в транзакции с проверкой превышения лимита).
+func (storage *UserStorage) InsertUserRefillRecord(ctx context.Context, userID int64, invoiceID int64, amount float64) error {
+	// Запуск транзакции.
+	err := dbutils.RunTx(ctx, storage.db,
+		// Функция, выполняемая внутри транзакции.
+		// Если функция вернет ошибку, произойдет откат транзакции.
+		func(tx *sqlx.Tx) error {
+			err := insertUserRefillRecordTx(ctx, tx, userID, invoiceID, amount)
+			return err
+		})
+
+	return err
+}
+
+func (storage *UserStorage) DeleteRefillRecord(ctx context.Context, invoiceID int64) error {
+	// Запрос на добавление данных.
+	const sqlString = `
+		DELETE FROM userrefills
+		WHERE invoice_id = $1;`
+
+	_, err := dbutils.Exec(ctx, storage.db, sqlString, invoiceID)
+	if err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return err
+	}
+
+	return nil
+}
+
+func (storage *UserStorage) ChangeRefillRecordStatus(ctx context.Context, status string, invoice_id int64) error {
+	// Запрос на добавление данных.
+	const sqlString = `
+		UPDATE userrefills
+		SET status = $1
+		WHERE invoice_id = $2;`
+
+	_, err := dbutils.Exec(ctx, storage.db, sqlString, status, invoice_id)
+	if err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return err
+	}
+
+	return nil
+}
+
+func (storage *UserStorage) GetRefillRecords(ctx context.Context) ([]int, error) {
+	// Запрос на добавление данных.
+	const sqlString = `
+		SELECT invoice_id
+		FROM userrefills
+		WHERE status = 'active';`
+
+	// Именованные параметры запроса.
+	res := []int{}
+
+	if err := dbutils.Select(ctx, storage.db, &res, sqlString); err != nil {
+		// Ошибка выполнения запроса (вызовет откат транзакции).
+		return nil, err
+	}
+
+	return res, nil
+}
