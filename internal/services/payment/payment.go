@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	types "tgssn/internal/model/bottypes"
 	consts "tgssn/internal/model/messages"
 	"tgssn/pkg/errors"
 	"tgssn/pkg/logger"
@@ -26,11 +25,7 @@ type MessageSender interface {
 
 // UserDataStorage Интерфейс для работы с хранилищем данных.
 type UserDataStorage interface {
-	CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error)
-	InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord) (bool, error)
 	AddUserLimit(ctx context.Context, userID int64, limits float64) error
-	GetUserLimit(ctx context.Context, userID int64) (float64, error)
-	CheckIfUserRecordsExist(ctx context.Context, userID int64) (int64, error)
 
 	ChangeRefillRecordStatus(ctx context.Context, status string, invoice_id int64) error
 	GetRefillRecords(ctx context.Context) ([]int, error)
@@ -119,7 +114,7 @@ func (s *Model) Init() {
 		for {
 			invoiceIDs, err := s.storage.GetRefillRecords(s.ctx)
 			if err != nil {
-				logger.Error("ОШибка", zap.Error(err))
+				logger.Error("Ошибка", zap.Error(err))
 			}
 
 			for i, invoiceID := range invoiceIDs {

@@ -12,11 +12,12 @@ create unique index if not exists users_tg_id
 
 create table if not exists usercategories
 (
-    id      serial primary key,
-    name    text   not null
-        constraint usercategories_name_check
-            check (name <> ''),
-    price   float  not null
+    id          serial primary key,
+    short_name  text not null,
+    name        text not null,
+    description text not null,
+    data_format text,
+    price       float  not null
 );
 
 comment on table usercategories is 'Категории расходов';

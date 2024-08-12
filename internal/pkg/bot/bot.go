@@ -8,6 +8,7 @@ import (
 	"tgssn/internal/model/messages"
 	"tgssn/internal/services/dashboard"
 	"tgssn/internal/services/payment"
+	"tgssn/pkg/cache"
 	"tgssn/pkg/db"
 	"tgssn/pkg/logger"
 )
@@ -33,6 +34,11 @@ func Init() (*App, error) {
 	logger.Init(cfg.LoggerLevel, "")
 
 	err = db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
+	if err != nil {
+		return nil, err
+	}
+
+	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisPassword, 0, cfg.Cache.EXTime)
 	if err != nil {
 		return nil, err
 	}

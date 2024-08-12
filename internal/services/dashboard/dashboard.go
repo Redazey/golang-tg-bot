@@ -3,11 +3,13 @@ package dashboard
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"tgssn/config"
 	types "tgssn/internal/model/bottypes"
 	consts "tgssn/internal/model/messages"
+	"tgssn/pkg/cache"
 	"tgssn/pkg/logger"
 
 	"go.uber.org/zap"
@@ -85,21 +87,42 @@ func (s *Model) Dashboard() error {
 		return err
 	}
 
+	if err = cache.SaveCache("dashboard_id", s.dashboardID); err != nil {
+		logger.Error("Failed to save dashboard_id to cache", zap.Error(err))
+		return err
+	}
+
 	return nil
 }
 
 func (s *Model) Init() {
 	go func() {
 		for {
-			err := s.Dashboard()
+			cacheID, err := cache.ReadCache("dashboard_id")
+			if err != nil {
+				logger.Error("Failed to read dashboard_id from cache", zap.Error(err))
+				time.Sleep(time.Minute * time.Duration(s.cfg.Dashboard))
+
+				continue
+			}
+
+			if cacheID == "" {
+				s.Dashboard()
+				time.Sleep(time.Minute * time.Duration(s.cfg.Dashboard))
+
+				continue
+			}
+
+			s.dashboardID, err = strconv.Atoi(cacheID)
 			if err != nil {
 				logger.Error("Failed to get updates", zap.Error(err))
 				time.Sleep(time.Minute * time.Duration(s.cfg.Dashboard))
 
 				continue
 			}
-
-			time.Sleep(time.Minute * time.Duration(s.cfg.Dashboard))
+			if err := cache.ClearCache("dashboard_id"); err != nil {
+				logger.Error("Failed to delete dashboard_id to cache", zap.Error(err))
+			}
 
 			s.tgClient.DeleteMsg(consts.WorkersChatID, s.dashboardID)
 		}

@@ -2,12 +2,15 @@ package messages
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 
 	"tgssn/config"
 	types "tgssn/internal/model/bottypes"
+	"tgssn/pkg/cache"
 	"tgssn/pkg/logger"
 )
 
@@ -47,6 +50,15 @@ type Invoice struct {
 	Payload         string  `json:"payload,omitempty"`
 }
 
+type CtgInfo struct {
+	ID          int     `db:"id"`
+	Name        string  `db:"name"`
+	Price       float64 `db:"price"`
+	Short       string  `db:"short_name"`
+	Description string  `db:"description"`
+	DataFormat  string  `db:"data_format"`
+}
+
 type GetInvoicesParams struct {
 	Status string `json:"status,omitempty"`
 }
@@ -72,22 +84,30 @@ type MessageSender interface {
 
 // UserDataStorage Интерфейс для работы с хранилищем данных.
 type UserDataStorage interface {
-	GetCategoryInfo(ctx context.Context, CtgID int64) (map[string]any, error)
+	// ctgs
+	GetCtgsInfo(ctx context.Context) ([]types.CtgInfo, error)
+	GetCtgShorts(ctx context.Context) ([]string, error)
+
+	// users
 	CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error)
-	InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord) (bool, error)
-
-	InsertUserRefillRecord(ctx context.Context, userID int64, invoiceID int64, amount float64) error
-	DeleteRefillRecord(ctx context.Context, invoiceID int64) error
-	ChangeRefillRecordStatus(ctx context.Context, status string, invoice_id int64) error
-	GetRefillRecords(ctx context.Context) ([]int, error)
-
+	InsertUserDataRecord(ctx context.Context, userID int64, ctgInfo types.CtgInfo) (bool, error)
 	AddUserLimit(ctx context.Context, userID int64, limits float64) error
 	GetUserLimit(ctx context.Context, userID int64) (float64, error)
 	CheckIfUserRecordsExist(ctx context.Context, userID int64) (int64, error)
 	GetUserOrders(ctx context.Context, userID int64) ([]types.UserDataRecord, error)
+
+	// refills
+	InsertUserRefillRecord(ctx context.Context, userID int64, invoiceID int64, amount float64) error
+	DeleteRefillRecord(ctx context.Context, invoiceID int64) error
+	ChangeRefillRecordStatus(ctx context.Context, status string, invoice_id int64) error
+	GetRefillRecords(ctx context.Context) ([]int, error)
+	GetRefillHistory(ctx context.Context, userID int64) ([]types.UserRefillRecord, error)
+
+	// workers
 	ChangeWorkerStatus(ctx context.Context, userID int64, status bool) (bool, error)
 	CheckIfWorkerExistAndAdd(ctx context.Context, userID int64, name string) (bool, error)
-	GetCtgInfoFromName(ctx context.Context, name string) (map[string]any, error)
+
+	// tickets
 	CreateTicket(ctx context.Context, workerID int64, buyerID int64, ctgID int64) (bool, error)
 	GetTicketInfo(ctx context.Context, workerID int64) (map[string]any, error)
 	UpdateTicketStatus(ctx context.Context, workerID int64, status string) error
@@ -97,40 +117,23 @@ type Payment interface {
 	CryptoPayRequest(ctx context.Context, method string, request any) ([]byte, error)
 }
 
-type Cache interface {
-	SaveCache(hashKey string, data interface{}) error
-}
-
-type userInteractions struct {
-	command     string
-	ticket      string
-	orderPage   int
-	ordersPages []types.UserDataRecord
-	paymentVal  float64
-	paymentID   int64
-}
-
 // Model Модель бота (клиент, хранилище, последние команды пользователя)
 type Model struct {
-	ctx                 context.Context
-	tgClient            MessageSender   // Клиент.
-	storage             UserDataStorage // Хранилище пользовательской информации.
-	payment             Payment         // Платёжка
-	cfg                 *config.Enviroment
-	lastInlineKbMsg     map[int64]int
-	lastUserInteraction map[int64]*userInteractions
+	ctx      context.Context
+	tgClient MessageSender   // Клиент.
+	storage  UserDataStorage // Хранилище пользовательской информации.
+	payment  Payment         // Платёжка
+	cfg      *config.Enviroment
 }
 
 // New Генерация сущности для хранения клиента ТГ и хранилища пользователей
 func New(ctx context.Context, tgClient MessageSender, storage UserDataStorage, payment Payment, cfg *config.Enviroment) *Model {
 	return &Model{
-		ctx:                 ctx,
-		tgClient:            tgClient,
-		storage:             storage,
-		payment:             payment,
-		cfg:                 cfg,
-		lastInlineKbMsg:     map[int64]int{},
-		lastUserInteraction: map[int64]*userInteractions{},
+		ctx:      ctx,
+		tgClient: tgClient,
+		storage:  storage,
+		payment:  payment,
+		cfg:      cfg,
 	}
 }
 
@@ -160,32 +163,100 @@ func (s *Model) IncomingMessage(msg Message) error {
 	s.ctx = ctx
 	defer span.Finish()
 
-	var lastUserCommand string
-	if interaction, ok := s.lastUserInteraction[msg.UserID]; ok && interaction != nil {
-		lastUserCommand = interaction.command
-	} else {
-		s.lastUserInteraction[msg.UserID] = &userInteractions{}
+	var PaymentCtgs []string
+	cacheCtgs, err := cache.ReadCache("ctgShorts")
+	if err != nil {
+		return err
 	}
 
-	s.lastUserInteraction[msg.UserID].command = ""
+	if cacheCtgs == "" {
+		PaymentCtgs, err = s.storage.GetCtgShorts(ctx)
+		if err != nil {
+			return err
+		}
+
+		if err := cache.SaveCache("ctgShorts", strings.Join(PaymentCtgs, " ")); err != nil {
+			return err
+		}
+	} else {
+		PaymentCtgs = strings.Split(cacheCtgs, " ")
+	}
+
+	var PaymentCtgsInfo []types.CtgInfo
+	var cacheCtgsInfo []types.CtgInfo
+	err = cache.ReadMapCache("ctgsInfo", &PaymentCtgsInfo)
+	if err != nil {
+		return err
+	}
+
+	if PaymentCtgsInfo == nil {
+		PaymentCtgsInfo, err = s.storage.GetCtgsInfo(ctx)
+		if err != nil {
+			return err
+		}
+
+		if err := cache.SaveMapCache("ctgsInfo", cacheCtgsInfo); err != nil {
+			return err
+		}
+	} else {
+		PaymentCtgsInfo = cacheCtgsInfo
+	}
+
+	lastUserCommand, err := cache.ReadCache(fmt.Sprintf("%v_command", msg.UserID))
+	if err != nil {
+		return err
+	}
 
 	// Распознавание стандартных команд.
-	if isNeedReturn, err := CheckBotCommands(s, msg); err != nil || isNeedReturn {
-		logger.Error("Error while CheckBotCommands: ", zap.Error(err))
+	if isNeedReturn, err := CheckBotCommands(s, msg, PaymentCtgs); err != nil || isNeedReturn {
+		if err != nil {
+			logger.Error("Error while CheckBotCommands: ", zap.Error(err))
+		}
+
 		return err
 	}
 
-	if isNeedReturn, err := CallbacksCommands(s, msg); err != nil || isNeedReturn {
-		logger.Error("Error while CallbacksCommands: ", zap.Error(err))
+	if isNeedReturn, err := CallbacksCommands(s, msg, PaymentCtgs, PaymentCtgsInfo); err != nil || isNeedReturn {
+		if err != nil {
+			logger.Error("Error while CallbacksCommands: ", zap.Error(err))
+		}
+
 		return err
 	}
 
-	if isNeedReturn, err := CheckIfEnterCmd(s, msg, lastUserCommand); err != nil || isNeedReturn {
-		logger.Error("Error while CheckIfEnterCmd: ", zap.Error(err))
+	if isNeedReturn, err := CheckIfEnterCmd(s, msg, PaymentCtgs, lastUserCommand, PaymentCtgsInfo); err != nil || isNeedReturn {
+		if err != nil {
+			logger.Error("Error while CheckIfEnterCmd: ", zap.Error(err))
+		}
+
+		if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), ""); err != nil {
+			return err
+		}
+
 		return err
 	}
 
 	// Отправка ответа по умолчанию.
-	_, err := s.tgClient.SendMessage(TxtUnknownCommand, msg.UserID)
+	_, err = s.tgClient.SendMessage(TxtUnknownCommand, msg.UserID)
 	return err
+}
+
+func GetCtgInfoFromName(ctgName string, ctgsInfo []types.CtgInfo) types.CtgInfo {
+	for _, ctg := range ctgsInfo {
+		if ctg.Name == ctgName {
+			return ctg
+		}
+	}
+
+	return types.CtgInfo{}
+}
+
+func GetCtgInfoFromID(ctgID int64, ctgsInfo []types.CtgInfo) types.CtgInfo {
+	for _, ctg := range ctgsInfo {
+		if ctg.ID == ctgID {
+			return ctg
+		}
+	}
+
+	return types.CtgInfo{}
 }

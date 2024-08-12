@@ -4,14 +4,24 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"tgssn/internal/model/bottypes"
+	types "tgssn/internal/model/bottypes"
+	"tgssn/pkg/cache"
 	"tgssn/pkg/errors"
-	"tgssn/pkg/logger"
 
 	"github.com/opentracing/opentracing-go"
 )
 
-func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error) {
+func CheckIfEnterCmd(s *Model, msg Message, paymentCtgs []string, lastUserCommand string, paymentCtgsInfo []types.CtgInfo) (bool, error) {
+	cacheInlinekbMsg, err := cache.ReadCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID))
+	if err != nil {
+		return true, err
+	}
+
+	lastInlinekbMsg, err := strconv.Atoi(cacheInlinekbMsg)
+	if err != nil {
+		return true, err
+	}
+
 	if lastUserCommand != "" {
 		span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkIfEnterLastCommand")
 		s.ctx = ctx
@@ -26,79 +36,82 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 				return true, errors.Wrap(err, "Пользователь ввёл неверное значение")
 			}
 
-			s.lastUserInteraction[msg.UserID].paymentVal = float64(userInput)
-
-			var btns []bottypes.TgRowButtons
-			btns = append(btns, bottypes.TgRowButtons{BackToProfileBtn})
-			for _, method := range PaymentMethods {
-				btns = append(btns, bottypes.TgRowButtons{bottypes.TgInlineButton{DisplayName: method, Value: method}})
+			if err = cache.SaveCache(fmt.Sprintf("%v_amount", msg.UserID), float64(userInput)); err != nil {
+				return true, err
 			}
 
-			return true, s.tgClient.EditInlineButtons(TxtPaymentQuestion, s.lastInlineKbMsg[msg.UserID], msg.UserID, btns)
+			var btns []types.TgRowButtons
+			btns = append(btns, types.TgRowButtons{BackToProfileBtn})
+			for _, method := range PaymentMethods {
+				btns = append(btns, types.TgRowButtons{types.TgInlineButton{DisplayName: method, Value: method}})
+			}
+
+			if lastInlinekbMsg == 0 {
+				s.tgClient.ShowInlineButtons(TxtPaymentQuestion, btns, msg.UserID)
+			}
+			return true, s.tgClient.EditInlineButtons(TxtPaymentQuestion, lastInlinekbMsg, msg.UserID, btns)
 
 		} else if strings.Contains(lastUserCommand, "buy") {
 			var err error
-			var ctgInfo map[string]any
-			var ctgName string
 
-			if lastUserCommand == "buy TU" {
-				ctgName = "Trans Union"
-				if ctgInfo, err = s.storage.GetCtgInfoFromName(ctx, ctgName); err != nil {
+			for _, ctg := range paymentCtgsInfo {
+				if lastUserCommand != "buy "+ctg.Short {
+					continue
+				}
+
+				if succsessful, err := s.storage.InsertUserDataRecord(ctx, msg.UserID, ctg); err != nil {
+					s.tgClient.SendMessage(TxtError, msg.UserID)
+					return true, err
+
+				} else if !succsessful {
+					if lastInlinekbMsg, err = s.tgClient.ShowInlineButtons(
+						TxtPaymentNotEnough,
+						BtnRefill,
+						msg.UserID,
+					); err != nil {
+						return true, err
+					}
+
+					if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastInlinekbMsg); err != nil {
+						return true, err
+					}
+
+					return true, nil
+				}
+
+				if isValidDataInput(msg.Text) {
+					if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), lastInlinekbMsg); err != nil {
+						return true, err
+					}
+				} else {
+					s.tgClient.SendMessage(TxtWrongTicketFormat, msg.UserID)
+					return true, nil
+				}
+
+				lastInlinekbMsg, err = s.tgClient.ShowInlineButtons(
+					fmt.Sprintf(TxtForWorkers, ctg.Name),
+					CreateInlineButtons(
+						BtnWorkersChatDN,
+						fmt.Sprintf(BtnWorkersChatVal, msg.UserID, ctg.Name),
+					),
+					WorkersChatID,
+				)
+				if err != nil {
 					return true, err
 				}
 
-			} else if lastUserCommand == "buy CR" {
-				ctgName = "Experian"
-				if ctgInfo, err = s.storage.GetCtgInfoFromName(ctx, ctgName); err != nil {
-					return true, err
-				}
-			}
-
-			if succsessful, err := s.storage.InsertUserDataRecord(ctx, msg.UserID, bottypes.UserDataRecord{
-				UserID:     msg.UserID,
-				CategoryID: ctgInfo["id"].(int64),
-			}); err != nil {
-				s.tgClient.SendMessage(TxtError, msg.UserID)
-				return true, err
-
-			} else if !succsessful {
-				if s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
-					TxtPaymentNotEnough,
-					BtnRefill,
-					msg.UserID,
-				); err != nil {
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastInlinekbMsg); err != nil {
 					return true, err
 				}
 
-				return true, nil
-			}
+				if err = s.storage.AddUserLimit(ctx, msg.UserID, -ctg.Price); err != nil {
+					return true, err
+				}
 
-			if isValidDataInput(msg.Text) {
-				s.lastUserInteraction[msg.UserID].command = msg.Text
-			} else {
-				s.tgClient.SendMessage(TxtWrongTicketFormat, msg.UserID)
-				return true, nil
-			}
+				_, err = s.tgClient.SendMessage(TxtTicketInProccess, msg.UserID)
 
-			s.lastInlineKbMsg[WorkersChatID], err = s.tgClient.ShowInlineButtons(
-				fmt.Sprintf(TxtForWorkers, ctgName),
-				CreateInlineButtons(
-					BtnWorkersChatDN,
-					fmt.Sprintf(BtnWorkersChatVal, msg.UserID, ctgName),
-				),
-				WorkersChatID,
-			)
-			if err != nil {
 				return true, err
 			}
-
-			if err = s.storage.AddUserLimit(ctx, msg.UserID, -ctgInfo["price"].(float64)); err != nil {
-				return true, err
-			}
-
-			_, err = s.tgClient.SendMessage(TxtTicketInProccess, msg.UserID)
-
-			return true, err
 
 		} else if lastUserCommand == "goodTicket" {
 
@@ -139,31 +152,35 @@ func CheckIfEnterCmd(s *Model, msg Message, lastUserCommand string) (bool, error
 
 func isValidDataInput(input string) bool {
 	parts := strings.Split(input, ";")
-	if len(parts) != 7 {
-		fmt.Printf("len - %v", len(parts))
-		return false
-	}
-
-	if parts[0] == "" || parts[0] == " " {
-		logger.Info("0")
-		return false
-	} else if parts[1] == "" || parts[1] == " " {
-		logger.Info("1")
-		return false
-	} else if parts[2] == "" || parts[2] == " " {
-		logger.Info("2")
-		return false
-	} else if parts[3] == "" || parts[3] == " " {
-		logger.Info("3")
-		return false
-	} else if _, ok := strconv.Atoi(parts[4]); ok != nil || parts[4] == "" || parts[4] == " " {
-		logger.Info("4")
-		return false
-	} else if parts[5] == "" || parts[5] == " " {
-		logger.Info("5")
-		return false
-	} else if _, ok := strconv.Atoi(parts[6]); ok != nil || parts[6] == "" || parts[6] == " " {
-		logger.Info("6")
+	if len(parts) == 7 {
+		if parts[0] == "" || parts[0] == " " {
+			return false
+		} else if parts[1] == "" || parts[1] == " " {
+			return false
+		} else if parts[2] == "" || parts[2] == " " {
+			return false
+		} else if parts[3] == "" || parts[3] == " " {
+			return false
+		} else if _, ok := strconv.Atoi(parts[4]); ok != nil || parts[4] == "" || parts[4] == " " {
+			return false
+		} else if parts[5] == "" || parts[5] == " " {
+			return false
+		} else if _, ok := strconv.Atoi(parts[6]); ok != nil || parts[6] == "" || parts[6] == " " {
+			return false
+		}
+	} else if len(parts) == 5 {
+		if parts[0] == "" || parts[0] == " " {
+			return false
+		} else if parts[1] == "" || parts[1] == " " {
+			return false
+		} else if parts[2] == "" || parts[2] == " " {
+			return false
+		} else if parts[3] == "" || parts[3] == " " {
+			return false
+		} else if _, ok := strconv.Atoi(parts[4]); ok != nil || parts[4] == "" || parts[4] == " " {
+			return false
+		}
+	} else {
 		return false
 	}
 

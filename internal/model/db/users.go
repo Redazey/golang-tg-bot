@@ -35,38 +35,51 @@ func NewUserStorage(db *sqlx.DB) *UserStorage {
 	}
 }
 
-func (storage *UserStorage) GetCategoryInfo(ctx context.Context, CtgID int64) (map[string]any, error) {
+func (storage *UserStorage) GetCtgShorts(ctx context.Context) ([]string, error) {
 	// Запрос на добавление данных.
 	const sqlString = `
-		SELECT *
-		FROM usercategories
-		WHERE id = $1;
-	`
+		SELECT short_name
+		FROM usercategories;`
+
+	var ctgShorts []string
 
 	// Выполнение запроса на добавление данных.
-	CtgInfo, err := dbutils.GetMap(ctx, storage.db, sqlString, CtgID)
-	if err != nil {
+	if err := dbutils.Select(ctx, storage.db, &ctgShorts, sqlString); err != nil {
 		return nil, err
 	}
 
-	return CtgInfo, nil
+	return ctgShorts, nil
 }
 
-func (storage *UserStorage) GetCtgInfoFromName(ctx context.Context, name string) (map[string]any, error) {
-	// Запрос на добавление данных.
+func (storage *UserStorage) GetCtgsInfo(ctx context.Context) ([]types.CtgInfo, error) {
+	// Запрос на добаление записи с проверкой существования категории.
 	const sqlString = `
 		SELECT *
-		FROM usercategories
-		WHERE name = $1;
-	`
+		FROM usercategories;`
 
-	// Выполнение запроса на добавление данных.
-	CtgInfo, err := dbutils.GetMap(ctx, storage.db, sqlString, name)
+	rows, err := storage.db.Query(sqlString)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
-	return CtgInfo, nil
+	var ctgs []types.CtgInfo
+
+	for rows.Next() {
+		var record types.CtgInfo
+
+		// Считаем, что поле 'timestamp' имеет тип time.Time в базе данных
+		if err := rows.Scan(&record.ID, &record.Name, &record.Price, &record.Short, &record.Description, &record.DataFormat); err != nil {
+			return nil, err
+		}
+
+		ctgs = append(ctgs, record)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return ctgs, nil
 }
 
 // InsertUser Добавление пользователя в базу данных.
@@ -123,7 +136,7 @@ func (storage *UserStorage) CheckIfUserExistAndAdd(ctx context.Context, userID i
 }
 
 // InsertUserDataRecord Добавление записи о расходах пользователя (в транзакции с проверкой превышения лимита).
-func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int64, rec types.UserDataRecord) (bool, error) {
+func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int64, ctgInfo types.CtgInfo) (bool, error) {
 	// Проверка существования пользователя в БД.
 	_, err := storage.CheckIfUserExistAndAdd(ctx, userID)
 	if err != nil {
@@ -136,17 +149,7 @@ func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int
 		return false, err
 	}
 
-	ctgInfo, err := storage.GetCategoryInfo(ctx, rec.CategoryID)
-	if err != nil {
-		return true, err
-	}
-
-	ctgPrice, ok := ctgInfo["price"].(float64)
-	if !ok {
-		return true, errors.New("Ошибка при конвертации типов")
-	}
-
-	if limit < ctgPrice {
+	if limit < ctgInfo.Price {
 		return false, nil
 	}
 
@@ -155,7 +158,7 @@ func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int
 		// Функция, выполняемая внутри транзакции.
 		// Если функция вернет ошибку, произойдет откат транзакции.
 		func(tx *sqlx.Tx) error {
-			err = insertUserDataRecordTx(ctx, tx, userID, rec)
+			err = insertUserDataRecordTx(ctx, tx, userID, ctgInfo.ID)
 			return err
 		})
 
@@ -237,22 +240,11 @@ func (storage *UserStorage) GetUserOrders(ctx context.Context, userID int64) ([]
 	var records []types.UserDataRecord
 
 	for rows.Next() {
-		var order struct {
-			ID         int64
-			CategoryID int64
-			Timestamp  time.Time
-		}
+		var record = types.UserDataRecord{UserID: userID}
 
 		// Считаем, что поле 'timestamp' имеет тип time.Time в базе данных
-		if err := rows.Scan(&order.ID, &order.CategoryID, &order.Timestamp); err != nil {
+		if err := rows.Scan(&record.RecordID, &record.CategoryID, &record.Period); err != nil {
 			return nil, err
-		}
-
-		record := types.UserDataRecord{
-			RecordID:   order.ID,
-			UserID:     userID,
-			CategoryID: order.CategoryID,
-			Period:     order.Timestamp,
 		}
 
 		records = append(records, record)
@@ -265,7 +257,7 @@ func (storage *UserStorage) GetUserOrders(ctx context.Context, userID int64) ([]
 }
 
 // insertUserDataRecordTx Функция добавления расхода, выполняемая внутри транзакции (tx).
-func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int64, rec types.UserDataRecord) error {
+func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int64, ctgID int64) error {
 
 	// Запрос на добаление записи с проверкой существования категории.
 	const sqlString = `
@@ -275,7 +267,7 @@ func insertUserDataRecordTx(ctx context.Context, tx sqlx.ExtContext, userID int6
 	// Именованные параметры запроса.
 	args := map[string]any{
 		"tg_id":       userID,
-		"category_id": rec.CategoryID,
+		"category_id": ctgID,
 	}
 
 	// Запуск на выполнение запроса с именованными параметрами.
@@ -590,4 +582,42 @@ func (storage *UserStorage) GetRefillRecords(ctx context.Context) ([]int, error)
 	}
 
 	return res, nil
+}
+
+func (storage *UserStorage) GetRefillHistory(ctx context.Context, userID int64) ([]types.UserRefillRecord, error) {
+	// Запрос на добаление записи с проверкой существования категории.
+	const sqlString = `
+		SELECT *
+		FROM userrefills
+		WHERE tg_id = $1 AND status = 'paid';`
+
+	rows, err := storage.db.Query(sqlString, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var records []types.UserRefillRecord
+
+	for rows.Next() {
+		var refill = types.UserRefillRecord{}
+
+		if err := rows.Scan(
+			&refill.RecordID,
+			&refill.UserID,
+			&refill.InvoiceID,
+			&refill.Status,
+			&refill.Amount,
+			&refill.Period,
+		); err != nil {
+			return nil, err
+		}
+
+		records = append(records, refill)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return records, nil
 }

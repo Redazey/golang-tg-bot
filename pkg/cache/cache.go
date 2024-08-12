@@ -33,6 +33,10 @@ func Init(Addr string, Password string, DB int, CacheEx time.Duration) error {
 	return nil
 }
 
+func GetConn() *redis.Client {
+	return Rdb
+}
+
 /*
 функция для проверки существования таблицы в кэше
 

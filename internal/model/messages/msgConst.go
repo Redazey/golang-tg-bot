@@ -24,27 +24,9 @@ var BtnCtgs = []types.TgRowButtons{
 }
 
 // Покупка/возвращение назад
-var BtnCR = []types.TgRowButtons{
+var BtnBuying = []types.TgRowButtons{
 	{
-		types.TgInlineButton{DisplayName: "BUY FOR 6$ ❗️20% SALE❗️", Value: "buy CR"},
-	},
-	{
-		BackToCtgBtn,
-	},
-}
-
-var BtnTU = []types.TgRowButtons{
-	{
-		types.TgInlineButton{DisplayName: "BUY FOR 8$ ❗️20% SALE❗️", Value: "buy TU"},
-	},
-	{
-		BackToCtgBtn,
-	},
-}
-
-var BtnFullz = []types.TgRowButtons{
-	{
-		types.TgInlineButton{DisplayName: "Buy", Value: "buy Fullz"},
+		types.TgInlineButton{},
 	},
 	{
 		BackToCtgBtn,
@@ -71,6 +53,10 @@ var BtnRefillRequest = []types.TgRowButtons{
 // Кнопки для истории заказов
 var BtnOrderBack = types.TgInlineButton{DisplayName: "Back", Value: "pageBack"}
 var BtnOrderForward = types.TgInlineButton{DisplayName: "Forward", Value: "pageForward"}
+
+// Кнопки для истории пополнений
+var BtnRefillBack = types.TgInlineButton{DisplayName: "Back", Value: "refillPageBack"}
+var BtnRefillForward = types.TgInlineButton{DisplayName: "Forward", Value: "refillPageForward"}
 
 // Кнопки для вкладки профиль
 var BtnProfile = []types.TgRowButtons{
@@ -121,20 +107,19 @@ func CreateInlineButtons(DisplayName string, value string) []types.TgRowButtons 
 var PaymentMethods = []string{"USDT", "TON", "GRAM", "NOT", "MY", "BTC", "LTC", "ETH", "BNB", "TRX", "USDC"}
 
 const (
-	OrdersInPage  = 3
-	WorkersChatID = -1002171174434
-	TxtStart      = "Hello, %v 👋.This is a bot for Experian and Trans union reports (cr,tu)"
-	TxtCtgs       = "📰 Choose a category that interests you:"
-	TxtReports    = "📁 Category: %v reports\nDescription: %v\n"
-	TxtCRDesc     = "CR"
-	TxtTUDesc     = "TU"
-	TxtFullzDesc  = `Fullz with ready experian in format
-	name;address;city;state;zip;dob;dl;dl issue date;expiration date
-	credit score 700+`
+	OrdersInPage   = 3
+	WorkersChatID  = -1002171174434
+	TxtStart       = "Hello, %v 👋.This is a bot for Experian, Trans union and Background reports (cr, tu, bg)"
+	TxtCtgs        = "📰 Choose a category that interests you:"
+	TxtBtnBuy      = "BUY FOR %v $ ❗️20%% SALE❗️"
+	TxtReports     = "📁 Category: %v reports\nDescription: %v\n"
 	TxtPaymentDesc = `Please send the data in the format:
-	Full name;address;city;state;ZIP;DOB;SSN
-	After that, the payment will be processed, and the money will be debited from your account
-	❗️ In case we are unable to find information based on your data, the money will be refunded ❗️`
+%v
+After that, the payment will be processed, and the money will be debited from your account
+❗️ In case we are unable to find information based on your data, the money will be refunded ❗️`
+	TxtFullzDesc = `Fullz with ready experian in format
+name;address;city;state;zip;dob;dl;dl issue date;expiration date
+credit score 700+`
 	TxtFullzPaymentDesc    = "This product is sold only in bulk\nfor purchasing please contact us here:"
 	TxtWrongTicketFormat   = "❗️ You entered the data in the incorrect format, please use the template: Full name;address;city;state;ZIP;DOB;SSN ❗️"
 	TxtTicketInProccess    = "Your order will be ready in approximately 5 minutes ✅"
@@ -161,6 +146,7 @@ const (
 	TxtForWorkers          = "❗️ Пришел тикет на %v репорт! ❗️"
 	TxtToWorker            = "Ты взял тикет на %v репорт! Партия гордится тобой!\nВот данные, которые прикрепил пользователь:\n%v"
 	TxtOrderHistory        = "💡 Order № %v\n🕐 Date: %v\n📁 Category: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
+	TxtRefillsHistory      = "💡 Invoice № %v\n🕐 Date: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
 	TxtHelp                = "This is a bot for Experian and Trans union reports (cr,tu). Enter /start"
 	TxtDashboard           = "Статистика на сегодня:\n%v"
 	TxtDashboardStats      = "Работник: %v\nЗаказы: %v ✅| %v ❌\n➖➖➖➖➖➖➖➖\n"

@@ -1,12 +1,12 @@
 package messages
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
-	"tgssn/internal/model/bottypes"
+	types "tgssn/internal/model/bottypes"
+	"tgssn/pkg/cache"
 	"tgssn/pkg/errors"
 	"tgssn/pkg/logger"
 
@@ -15,7 +15,17 @@ import (
 )
 
 // callbacks
-func CallbacksCommands(s *Model, msg Message) (bool, error) {
+func CallbacksCommands(s *Model, msg Message, paymentCtgs []string, paymentCtgsInfo []types.CtgInfo) (bool, error) {
+	cacheInlinekbMsg, err := cache.ReadCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID))
+	if err != nil {
+		return true, err
+	}
+
+	lastInlinekbMsg, err := strconv.Atoi(cacheInlinekbMsg)
+	if err != nil {
+		return true, err
+	}
+
 	if msg.IsCallback {
 		span, ctx := opentracing.StartSpanFromContext(s.ctx, "callbacksCommands")
 		s.ctx = ctx
@@ -24,55 +34,101 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 
 		// Дерево callbacks начинающихся с Categories
 		if msg.Text == "backToCtg" {
+			var btns []types.TgRowButtons
+			for _, ctg := range paymentCtgs {
+				btns = append(btns, types.TgRowButtons{types.TgInlineButton{DisplayName: ctg, Value: ctg}})
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, btns, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
+
 			return true, s.tgClient.EditInlineButtons(
 				TxtCtgs,
-				s.lastInlineKbMsg[msg.UserID],
+				lastInlinekbMsg,
 				msg.UserID,
-				BtnCtgs,
+				btns,
 			)
 
 			// выбор категории товара
 
-		} else if msg.Text == "CR" {
-			return true, s.tgClient.EditInlineButtons(
-				fmt.Sprintf(TxtReports, "Experian", TxtCRDesc),
-				s.lastInlineKbMsg[msg.UserID],
-				msg.UserID,
-				BtnCR,
-			)
+		} else if strings.Contains(strings.Join(paymentCtgs, " "), msg.Text) && !strings.Contains(msg.Text, "buy") {
+			for _, ctg := range paymentCtgsInfo {
+				if msg.Text != ctg.Short {
+					continue
+				}
 
-		} else if msg.Text == "TU" {
-			return true, s.tgClient.EditInlineButtons(
-				fmt.Sprintf(TxtReports, "Trans union", TxtTUDesc),
-				s.lastInlineKbMsg[msg.UserID],
-				msg.UserID,
-				BtnTU,
-			)
+				BtnBuying[0][0] = types.TgInlineButton{
+					DisplayName: fmt.Sprintf(TxtBtnBuy, ctg.Price),
+					Value:       "buy " + ctg.Short,
+				}
 
-		} else if msg.Text == "fullz" {
-			return true, s.tgClient.EditInlineButtons(
-				fmt.Sprintf(TxtReports, "Ready fulls", TxtFullzDesc),
-				s.lastInlineKbMsg[msg.UserID],
-				msg.UserID,
-				BtnFullz,
-			)
+				if lastInlinekbMsg == 0 {
+					lastMsgID, err := s.tgClient.ShowInlineButtons(
+						fmt.Sprintf(TxtReports, ctg.Name, ctg.Description),
+						BtnBuying,
+						msg.UserID,
+					)
+					if err != nil {
+						return true, err
+					}
+
+					if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+						return true, err
+					}
+				}
+
+				return true, s.tgClient.EditInlineButtons(
+					fmt.Sprintf(TxtReports, ctg.Name, ctg.Description),
+					lastInlinekbMsg,
+					msg.UserID,
+					BtnBuying,
+				)
+			}
 
 			// покупка товара
 
 		} else if strings.Contains(msg.Text, "buy") {
-			if msg.Text == "buy TU" {
-				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, []bottypes.TgRowButtons{{BackToCtgBtn}})
-				s.lastUserInteraction[msg.UserID].command = "buy TU"
-				return true, nil
+			for _, ctg := range paymentCtgsInfo {
+				if msg.Text != "buy "+ctg.Short {
+					continue
+				}
+				if msg.Text == "buy Fullz" {
+					s.tgClient.DeleteInlineButtons(msg.UserID, lastInlinekbMsg, TxtFullzPaymentDesc)
+					return true, nil
+				}
 
-			} else if msg.Text == "buy CR" {
-				s.tgClient.EditInlineButtons(TxtPaymentDesc, s.lastInlineKbMsg[msg.UserID], msg.UserID, []bottypes.TgRowButtons{{BackToCtgBtn}})
-				s.lastUserInteraction[msg.UserID].command = "buy CR"
-				return true, nil
+				if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "buy "+ctg.Short); err != nil {
+					return true, err
+				}
 
-			} else {
-				s.tgClient.DeleteInlineButtons(msg.UserID, s.lastInlineKbMsg[msg.UserID], TxtFullzPaymentDesc)
-				return true, nil
+				if lastInlinekbMsg == 0 {
+					lastMsgID, err := s.tgClient.ShowInlineButtons(
+						TxtPaymentDesc,
+						[]types.TgRowButtons{{BackToCtgBtn}},
+						msg.UserID,
+					)
+					if err != nil {
+						return true, err
+					}
+
+					if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+						return true, err
+					}
+				}
+				return true, s.tgClient.EditInlineButtons(
+					fmt.Sprintf(TxtPaymentDesc, ctg.DataFormat),
+					lastInlinekbMsg,
+					msg.UserID,
+					[]types.TgRowButtons{{BackToCtgBtn}},
+				)
 			}
 
 			// Дерево callbacks начинающихся с Profile
@@ -91,56 +147,174 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, err
 			}
 
-			err = s.tgClient.EditInlineButtons(
-				fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
-				s.lastInlineKbMsg[msg.UserID],
-				msg.UserID,
-				BtnProfile,
-			)
-			if err != nil {
-				return true, err
-			}
-
-			return true, nil
-
-		} else if msg.Text == "refill" {
-			s.lastUserInteraction[msg.UserID].command = "refill"
-			return true, s.tgClient.EditInlineButtons(
-				TxtPaymentQuestion,
-				s.lastInlineKbMsg[msg.UserID],
-				msg.UserID,
-				[]bottypes.TgRowButtons{{BackToProfileBtn}},
-			)
-
-		} else if msg.Text == "orders" {
-			if s.lastUserInteraction[msg.UserID].ordersPages == nil {
-				orders, err := s.storage.GetUserOrders(ctx, msg.UserID)
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
+					BtnProfile,
+					msg.UserID,
+				)
 				if err != nil {
 					return true, err
 				}
 
-				s.lastUserInteraction[msg.UserID].ordersPages = orders
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
 			}
 
-			orders := s.lastUserInteraction[msg.UserID].ordersPages
-			s.lastUserInteraction[msg.UserID].orderPage = 0
+			return true, s.tgClient.EditInlineButtons(
+				fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
+				lastInlinekbMsg,
+				msg.UserID,
+				BtnProfile,
+			)
 
-			txtPage, err := getPages(ctx, s, msg, 0, orders)
+		} else if msg.Text == "refill" {
+			if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "refill"); err != nil {
+				return true, err
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					TxtPaymentQuestion,
+					[]types.TgRowButtons{{BackToProfileBtn}},
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
+			return true, s.tgClient.EditInlineButtons(
+				TxtPaymentQuestion,
+				lastInlinekbMsg,
+				msg.UserID,
+				[]types.TgRowButtons{{BackToProfileBtn}},
+			)
+
+		} else if msg.Text == "orders" {
+			var orders []types.UserDataRecord
+			if err := cache.ReadMapCache(fmt.Sprintf("%v_orders", msg.UserID), &orders); err != nil {
+				return true, err
+			}
+			if orders == nil {
+				orders, err = s.storage.GetUserOrders(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveMapCache(fmt.Sprintf("%v_orders", msg.UserID), &orders); err != nil {
+					return true, err
+				}
+			}
+
+			var btns []types.TgRowButtons
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_orderPage", msg.UserID), 0); err != nil {
+				return true, err
+			}
+
+			txtPage, err := getOrdersPages(0, orders, paymentCtgsInfo)
 			if err != nil {
 				return true, err
 			}
 
+			if OrdersInPage >= len(orders) {
+				btns = []types.TgRowButtons{{BackToProfileBtn}}
+			} else {
+				btns = []types.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn}}
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					TxtPaymentDesc,
+					[]types.TgRowButtons{{BackToCtgBtn}},
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
 			return true, s.tgClient.EditInlineButtons(
 				txtPage,
-				s.lastInlineKbMsg[msg.UserID],
+				lastInlinekbMsg,
 				msg.UserID,
-				[]bottypes.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn}},
+				btns,
+			)
+
+		} else if msg.Text == "refills" {
+			var refills []types.UserRefillRecord
+			if err := cache.ReadMapCache(fmt.Sprintf("%v_orders", msg.UserID), &refills); err != nil {
+				return true, err
+			}
+
+			if refills == nil {
+				refills, err := s.storage.GetRefillHistory(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveMapCache(fmt.Sprintf("%v_orders", msg.UserID), &refills); err != nil {
+					return true, err
+				}
+			}
+
+			var btns []types.TgRowButtons
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_refillPage", msg.UserID), 0); err != nil {
+				return true, err
+			}
+
+			txtPage := getRefillPages(0, refills)
+
+			if OrdersInPage >= len(refills) {
+				btns = []types.TgRowButtons{{BackToProfileBtn}}
+			} else {
+				btns = []types.TgRowButtons{{BtnRefillForward}, {BackToProfileBtn}}
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					txtPage,
+					btns,
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
+			return true, s.tgClient.EditInlineButtons(
+				txtPage,
+				lastInlinekbMsg,
+				msg.UserID,
+				btns,
 			)
 
 		} else if msg.Text == "deleteInvoice" {
+			cachePaymentID, err := cache.ReadCache(fmt.Sprintf("%v_paymentID", msg.UserID))
+			if err != nil {
+				return true, err
+			}
+
+			paymentID, err := strconv.Atoi(cachePaymentID)
+			if err != nil {
+				return true, err
+			}
+
 			body, err := s.payment.CryptoPayRequest(
 				s.ctx, "deleteInvoice",
-				DeleteInvoiceRequest{InvoiceID: s.lastUserInteraction[msg.UserID].paymentID},
+				DeleteInvoiceRequest{InvoiceID: int64(paymentID)},
 			)
 			if err != nil {
 				logger.Error("Failed to delete invoice", zap.Error(err))
@@ -161,19 +335,42 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, err
 			}
 
-			if err = s.storage.DeleteRefillRecord(ctx, s.lastUserInteraction[msg.UserID].paymentID); err != nil {
+			if err = s.storage.DeleteRefillRecord(ctx, int64(paymentID)); err != nil {
 				return true, err
 			}
 
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					TxtPaymentCanceled,
+					[]types.TgRowButtons{{BackToProfileBtn}},
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
 			return true, s.tgClient.EditInlineButtons(
 				TxtPaymentCanceled,
-				s.lastInlineKbMsg[msg.UserID],
+				lastInlinekbMsg,
 				msg.UserID,
-				[]bottypes.TgRowButtons{{BackToProfileBtn}},
+				[]types.TgRowButtons{{BackToProfileBtn}},
 			)
 
 		} else if strings.Contains(strings.Join(PaymentMethods, " "), msg.Text) {
-			amount := s.lastUserInteraction[msg.UserID].paymentVal
+			cacheAmount, err := cache.ReadCache(fmt.Sprintf("%v_amount", msg.UserID))
+			if err != nil {
+				return true, err
+			}
+
+			amount, err := strconv.Atoi(cacheAmount)
+			if err != nil {
+				return true, err
+			}
+
 			if amount == 0 {
 				if _, err = s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
 					return true, err
@@ -191,7 +388,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 
 				err = s.tgClient.EditInlineButtons(
 					fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
-					s.lastInlineKbMsg[msg.UserID],
+					lastInlinekbMsg,
 					msg.UserID,
 					BtnProfile,
 				)
@@ -206,8 +403,8 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				CurrencyType: "fiat",
 				Asset:        msg.Text,
 				Fiat:         "USD",
-				Amount:       s.lastUserInteraction[msg.UserID].paymentVal,
-				Description:  fmt.Sprintf(TxtRefillDesc, s.lastUserInteraction[msg.UserID].paymentVal, msg.Text),
+				Amount:       float64(amount),
+				Description:  fmt.Sprintf(TxtRefillDesc, amount, msg.Text),
 				Payload:      fmt.Sprintf("%v", msg.UserID),
 				Expires:      s.cfg.PaymentEX,
 			}
@@ -226,91 +423,282 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, err
 			}
 
-			s.lastUserInteraction[msg.UserID].paymentID = paymentState.InvoiceID
+			if err := cache.SaveCache(fmt.Sprintf("%v_paymentID", msg.UserID), paymentState.InvoiceID); err != nil {
+				return true, err
+			}
 			BtnRefillRequest[0][0].URL = paymentState.BotInvoiceURL
 
-			if err = s.storage.InsertUserRefillRecord(ctx, msg.UserID, paymentState.InvoiceID, amount); err != nil {
+			if err = s.storage.InsertUserRefillRecord(ctx, msg.UserID, paymentState.InvoiceID, float64(amount)); err != nil {
 				return true, err
 			}
 
-			if s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
+			lastMsgID, err := s.tgClient.ShowInlineButtons(
 				TxtRefillReqCreated,
 				BtnRefillRequest,
 				msg.UserID,
-			); err != nil {
+			)
+			if err != nil {
+				return true, err
+			}
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
 				return true, err
 			}
 
 			return true, nil
 
 		} else if msg.Text == "pageBack" {
-			if s.lastUserInteraction[msg.UserID].ordersPages == nil {
-				orders, err := s.storage.GetUserOrders(ctx, msg.UserID)
-				if err != nil {
-					return true, err
-				}
-
-				s.lastUserInteraction[msg.UserID].ordersPages = orders
-			}
-
-			s.lastUserInteraction[msg.UserID].orderPage -= OrdersInPage
-
-			var (
-				orders    = s.lastUserInteraction[msg.UserID].ordersPages
-				page      = s.lastUserInteraction[msg.UserID].orderPage
-				btnOrders []bottypes.TgRowButtons
-			)
-
-			txtPage, err := getPages(ctx, s, msg, page, orders)
+			cacheOrderPage, err := cache.ReadCache(fmt.Sprintf("%v_orderPage", msg.UserID))
 			if err != nil {
 				return true, err
 			}
 
-			if page == 0 {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn}}
-			} else {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn}}
+			orderPage, err := strconv.Atoi(cacheOrderPage)
+			if err != nil {
+				return true, err
 			}
 
+			var orders []types.UserDataRecord
+			if err = cache.ReadMapCache(fmt.Sprintf("%v_orderPage", msg.UserID), &orders); err != nil {
+				return true, err
+			}
+
+			if orders == nil {
+				orders, err = s.storage.GetUserOrders(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveMapCache(fmt.Sprintf("%v_orders", msg.UserID), &orders); err != nil {
+					return true, err
+				}
+			}
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_orderPage", msg.UserID), orderPage-OrdersInPage); err != nil {
+				return true, err
+			}
+
+			var btnOrders []types.TgRowButtons
+
+			txtPage, err := getOrdersPages(orderPage, orders, paymentCtgsInfo)
+			if err != nil {
+				return true, err
+			}
+
+			if orderPage == 0 {
+				btnOrders = []types.TgRowButtons{{BtnOrderForward}, {BackToProfileBtn}}
+			} else if orderPage <= len(orders) {
+				btnOrders = []types.TgRowButtons{{BackToProfileBtn}}
+			} else {
+				btnOrders = []types.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn}}
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					txtPage,
+					btnOrders,
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
 			return true, s.tgClient.EditInlineButtons(
 				txtPage,
-				s.lastInlineKbMsg[msg.UserID],
+				lastInlinekbMsg,
 				msg.UserID,
 				btnOrders,
 			)
 
 		} else if msg.Text == "pageForward" {
-			if s.lastUserInteraction[msg.UserID].ordersPages == nil {
-				orders, err := s.storage.GetUserOrders(ctx, msg.UserID)
-				if err != nil {
-					return true, err
-				}
-
-				s.lastUserInteraction[msg.UserID].ordersPages = orders
-			}
-
-			s.lastUserInteraction[msg.UserID].orderPage += OrdersInPage
-
-			var (
-				orders    = s.lastUserInteraction[msg.UserID].ordersPages
-				page      = s.lastUserInteraction[msg.UserID].orderPage
-				btnOrders []bottypes.TgRowButtons
-			)
-
-			txtPage, err := getPages(ctx, s, msg, page, orders)
+			cacheOrderPage, err := cache.ReadCache(fmt.Sprintf("%v_orderPage", msg.UserID))
 			if err != nil {
 				return true, err
 			}
 
-			if page+OrdersInPage >= len(orders) {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack}, {BackToProfileBtn}}
-			} else {
-				btnOrders = []bottypes.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn}}
+			orderPage, err := strconv.Atoi(cacheOrderPage)
+			if err != nil {
+				return true, err
 			}
 
+			var orders []types.UserDataRecord
+			if err = cache.ReadMapCache(fmt.Sprintf("%v_orderPage", msg.UserID), &orders); err != nil {
+				return true, err
+			}
+
+			if orders == nil {
+				orders, err = s.storage.GetUserOrders(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveMapCache(fmt.Sprintf("%v_orders", msg.UserID), &orders); err != nil {
+					return true, err
+				}
+			}
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_orderPage", msg.UserID), orderPage-OrdersInPage); err != nil {
+				return true, err
+			}
+
+			var btnOrders []types.TgRowButtons
+
+			txtPage, err := getOrdersPages(orderPage, orders, paymentCtgsInfo)
+			if err != nil {
+				return true, err
+			}
+
+			if orderPage+OrdersInPage >= len(orders) {
+				btnOrders = []types.TgRowButtons{{BtnOrderBack}, {BackToProfileBtn}}
+			} else {
+				btnOrders = []types.TgRowButtons{{BtnOrderBack, BtnOrderForward}, {BackToProfileBtn}}
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					txtPage,
+					btnOrders,
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
 			return true, s.tgClient.EditInlineButtons(
 				txtPage,
-				s.lastInlineKbMsg[msg.UserID],
+				lastInlinekbMsg,
+				msg.UserID,
+				btnOrders,
+			)
+
+		} else if msg.Text == "refillPageBack" {
+			cacheRefillPage, err := cache.ReadCache(fmt.Sprintf("%v_refillPage", msg.UserID))
+			if err != nil {
+				return true, err
+			}
+
+			refillPage, err := strconv.Atoi(cacheRefillPage)
+			if err != nil {
+				return true, err
+			}
+
+			var refills []types.UserRefillRecord
+			if err = cache.ReadMapCache(fmt.Sprintf("%v_refills", msg.UserID), &refills); err != nil {
+				return true, err
+			}
+
+			if refills == nil {
+				refills, err = s.storage.GetRefillHistory(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveMapCache(fmt.Sprintf("%v_refills", msg.UserID), &refills); err != nil {
+					return true, err
+				}
+			}
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_refillPage", msg.UserID), refillPage-OrdersInPage); err != nil {
+				return true, err
+			}
+
+			var btnOrders []types.TgRowButtons
+
+			txtPage := getRefillPages(refillPage, refills)
+
+			if refillPage == 0 {
+				btnOrders = []types.TgRowButtons{{BtnRefillForward}, {BackToProfileBtn}}
+			} else {
+				btnOrders = []types.TgRowButtons{{BtnRefillBack, BtnRefillForward}, {BackToProfileBtn}}
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					txtPage,
+					btnOrders,
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
+			return true, s.tgClient.EditInlineButtons(
+				txtPage,
+				lastInlinekbMsg,
+				msg.UserID,
+				btnOrders,
+			)
+
+		} else if msg.Text == "refillPageForward" {
+			cacheRefillPage, err := cache.ReadCache(fmt.Sprintf("%v_refillPage", msg.UserID))
+			if err != nil {
+				return true, err
+			}
+
+			refillPage, err := strconv.Atoi(cacheRefillPage)
+			if err != nil {
+				return true, err
+			}
+
+			var refills []types.UserRefillRecord
+			if err = cache.ReadMapCache(fmt.Sprintf("%v_refills", msg.UserID), &refills); err != nil {
+				return true, err
+			}
+
+			if refills == nil {
+				refills, err = s.storage.GetRefillHistory(ctx, msg.UserID)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveMapCache(fmt.Sprintf("%v_refills", msg.UserID), &refills); err != nil {
+					return true, err
+				}
+			}
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_refillPage", msg.UserID), refillPage-OrdersInPage); err != nil {
+				return true, err
+			}
+
+			var btnOrders []types.TgRowButtons
+
+			txtPage := getRefillPages(refillPage, refills)
+
+			if refillPage+OrdersInPage >= len(refills) {
+				btnOrders = []types.TgRowButtons{{BtnRefillBack}, {BackToProfileBtn}}
+			} else {
+				btnOrders = []types.TgRowButtons{{BtnRefillBack, BtnRefillForward}, {BackToProfileBtn}}
+			}
+
+			if lastInlinekbMsg == 0 {
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					txtPage,
+					btnOrders,
+					msg.UserID,
+				)
+				if err != nil {
+					return true, err
+				}
+
+				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+					return true, err
+				}
+			}
+			return true, s.tgClient.EditInlineButtons(
+				txtPage,
+				lastInlinekbMsg,
 				msg.UserID,
 				btnOrders,
 			)
@@ -318,32 +706,38 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			// Раздел Callback'ов, которые отправляют работники
 		} else if strings.Contains(msg.Text, "takeTicket:") {
 			callbackData := strings.Split(msg.Text, ":")
+			reportType := callbackData[2]
 			buyerID, err := strconv.Atoi(callbackData[1])
 			if err != nil {
 				return true, err
 			}
 
-			reportType := callbackData[2]
-			ctgInfo, err := s.storage.GetCtgInfoFromName(ctx, reportType)
-			if err != nil {
-				return true, err
-			}
+			ctgInfo := GetCtgInfoFromName(reportType, paymentCtgsInfo)
 
 			if _, err = s.storage.CheckIfWorkerExistAndAdd(ctx, msg.UserID, msg.UserDisplayName); err != nil {
 				return true, err
 			}
 
-			if succsessful, err := s.storage.CreateTicket(ctx, msg.UserID, int64(buyerID), ctgInfo["id"].(int64)); err != nil || !succsessful {
+			if succsessful, err := s.storage.CreateTicket(ctx, msg.UserID, int64(buyerID), ctgInfo.ID); err != nil || !succsessful {
 				s.tgClient.SendMessage(TxtBusyWorker, msg.UserID)
 				return true, err
 			}
 
-			s.lastInlineKbMsg[msg.UserID], err = s.tgClient.ShowInlineButtons(
-				fmt.Sprintf(TxtToWorker, reportType, s.lastUserInteraction[int64(buyerID)].ticket),
+			ticketData, err := cache.ReadCache(fmt.Sprintf("%v_ticket", msg.UserID))
+			if err != nil {
+				return true, err
+			}
+
+			lastMsgID, err := s.tgClient.ShowInlineButtons(
+				fmt.Sprintf(TxtToWorker, reportType, ticketData),
 				BtnToWorker,
 				msg.UserID,
 			)
 			if err != nil {
+				return true, err
+			}
+
+			if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
 				return true, err
 			}
 
@@ -380,33 +774,17 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, errors.New("Ошибка при конвертации типов")
 			}
 
-			ctgInfo, err := s.storage.GetCategoryInfo(ctx, ctgID)
-			if err != nil {
-				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-				return true, err
-			}
-
-			ctgName, ok := ctgInfo["name"].(string)
-			if !ok {
-				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-				return true, errors.New("Ошибка при конвертации типов")
-			}
-
-			ctgPrice, ok := ctgInfo["price"].(float64)
-			if !ok {
-				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-				return true, errors.New("Ошибка при конвертации типов")
-			}
+			ctgInfo := GetCtgInfoFromID(ctgID, paymentCtgsInfo)
 
 			if _, err := s.tgClient.SendMessage(
-				fmt.Sprintf(TxtBadTicketUsr, ctgName, ctgPrice),
+				fmt.Sprintf(TxtBadTicketUsr, ctgInfo.Name, ctgInfo.Price),
 				msg.UserID,
 			); err != nil {
 				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
 				return true, err
 			}
 
-			if err := s.storage.AddUserLimit(ctx, buyerID, ctgPrice); err != nil {
+			if err := s.storage.AddUserLimit(ctx, buyerID, ctgInfo.Price); err != nil {
 				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
 				return true, err
 			}
@@ -414,10 +792,11 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			return true, s.tgClient.DeleteInlineButtons(msg.UserID, msg.CallbackMsgID, TxtBadTicket)
 
 		} else if msg.Text == "goodTicket" {
-			s.lastUserInteraction[msg.UserID].command = "goodTicket"
+			if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "goodTicket"); err != nil {
+				return true, err
+			}
 
 			return true, s.tgClient.DeleteInlineButtons(msg.UserID, msg.CallbackMsgID, TxtSendFile)
-
 		}
 	}
 
@@ -425,39 +804,28 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 	return false, nil
 }
 
-func getPages(ctx context.Context, s *Model, msg Message, from int, orders []bottypes.UserDataRecord) (string, error) {
-	var (
-		txtOrders strings.Builder
-		ctgsInfo  = make(map[int64]map[string]any)
-		err       error
-	)
+func getOrdersPages(from int, orders []types.UserDataRecord, ctgs []types.CtgInfo) (string, error) {
+	var txtOrders strings.Builder
 
 	txtOrders.WriteString(fmt.Sprintf("Page: %v\n", from/OrdersInPage+1))
 
 	for _, order := range orders[from:min(from+OrdersInPage, len(orders))] {
-		if ctgsInfo[order.CategoryID] == nil {
-			ctgsInfo[order.CategoryID], err = s.storage.GetCategoryInfo(ctx, order.CategoryID)
-			if err != nil {
-				s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-				return "", err
-			}
-		}
-		ctgInfo := ctgsInfo[order.CategoryID]
+		ctgInfo := GetCtgInfoFromID(order.CategoryID, ctgs)
 
-		ctgName, ok := ctgInfo["name"].(string)
-		if !ok {
-			s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-			return "", errors.New("Ошибка при конвертации типов")
-		}
-
-		ctgPrice, ok := ctgInfo["price"].(float64)
-		if !ok {
-			s.tgClient.SendMessage(TxtErrorTicketUpd, msg.UserID)
-			return "", errors.New("Ошибка при конвертации типов")
-		}
-
-		txtOrders.WriteString(fmt.Sprintf(TxtOrderHistory, order.RecordID, order.Period, ctgName, ctgPrice))
+		txtOrders.WriteString(fmt.Sprintf(TxtOrderHistory, order.RecordID, order.Period, ctgInfo.Name, ctgInfo.Price))
 	}
 
 	return txtOrders.String(), nil
+}
+
+func getRefillPages(from int, refills []types.UserRefillRecord) string {
+	var txtRefills strings.Builder
+
+	txtRefills.WriteString(fmt.Sprintf("Page: %v\n", from/OrdersInPage+1))
+
+	for _, refill := range refills[from:min(from+OrdersInPage, len(refills))] {
+		txtRefills.WriteString(fmt.Sprintf(TxtRefillsHistory, refill.InvoiceID, refill.Period, refill.Amount))
+	}
+
+	return txtRefills.String()
 }
