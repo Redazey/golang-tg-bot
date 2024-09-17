@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"tgssn/internal/pkg/bot"
+	"tgseller/internal/pkg/bot"
 )
 
 func main() {

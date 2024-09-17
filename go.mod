@@ -1,4 +1,4 @@
-module tgssn
+module tgseller
 
 go 1.22.2
 

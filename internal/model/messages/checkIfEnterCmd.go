@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	types "tgssn/internal/model/bottypes"
-	"tgssn/pkg/cache"
-	"tgssn/pkg/errors"
+	types "tgseller/internal/model/bottypes"
+	"tgseller/pkg/cache"
+	"tgseller/pkg/errors"
 
 	"github.com/opentracing/opentracing-go"
 )
@@ -80,7 +80,7 @@ func CheckIfEnterCmd(s *Model, msg Message, paymentCtgs []string, lastUserComman
 				}
 
 				if isValidDataInput(msg.Text) {
-					if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), lastInlinekbMsg); err != nil {
+					if err := cache.SaveCache(fmt.Sprintf("%v_ticket", msg.UserID), lastInlinekbMsg); err != nil {
 						return true, err
 					}
 				} else {

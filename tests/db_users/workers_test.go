@@ -2,8 +2,8 @@ package dbusers_test
 
 import (
 	"testing"
-	"tgssn/internal/model/db"
-	"tgssn/tests/suite"
+	"tgseller/internal/model/db"
+	"tgseller/tests/suite"
 
 	"github.com/stretchr/testify/assert"
 )

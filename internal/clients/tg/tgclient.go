@@ -3,12 +3,12 @@ package tg
 import (
 	"fmt"
 	"strings"
-	"tgssn/pkg/logger"
+	"tgseller/pkg/logger"
 
-	"tgssn/internal/model/messages"
-	"tgssn/pkg/errors"
+	"tgseller/internal/model/messages"
+	"tgseller/pkg/errors"
 
-	types "tgssn/internal/model/bottypes"
+	types "tgseller/internal/model/bottypes"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go.uber.org/zap"

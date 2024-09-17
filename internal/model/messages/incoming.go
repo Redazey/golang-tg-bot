@@ -8,10 +8,10 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
 
-	"tgssn/config"
-	types "tgssn/internal/model/bottypes"
-	"tgssn/pkg/cache"
-	"tgssn/pkg/logger"
+	"tgseller/config"
+	types "tgseller/internal/model/bottypes"
+	"tgseller/pkg/cache"
+	"tgseller/pkg/logger"
 )
 
 // Область "Внешний интерфейс": начало.

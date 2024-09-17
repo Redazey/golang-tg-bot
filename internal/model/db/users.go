@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	types "tgssn/internal/model/bottypes"
-	"tgssn/internal/utils/dbutils"
-	"tgssn/pkg/errors"
-	"tgssn/pkg/logger"
+	types "tgseller/internal/model/bottypes"
+	"tgseller/internal/utils/dbutils"
+	"tgseller/pkg/errors"
+	"tgseller/pkg/logger"
 
 	"github.com/jmoiron/sqlx"
 )

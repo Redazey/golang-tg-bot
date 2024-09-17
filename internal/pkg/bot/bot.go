@@ -2,15 +2,15 @@ package bot
 
 import (
 	"context"
-	"tgssn/config"
-	"tgssn/internal/clients/tg"
-	userStorage "tgssn/internal/model/db"
-	"tgssn/internal/model/messages"
-	"tgssn/internal/services/dashboard"
-	"tgssn/internal/services/payment"
-	"tgssn/pkg/cache"
-	"tgssn/pkg/db"
-	"tgssn/pkg/logger"
+	"tgseller/config"
+	"tgseller/internal/clients/tg"
+	userStorage "tgseller/internal/model/db"
+	"tgseller/internal/model/messages"
+	"tgseller/internal/services/dashboard"
+	"tgseller/internal/services/payment"
+	"tgseller/pkg/cache"
+	"tgseller/pkg/db"
+	"tgseller/pkg/logger"
 )
 
 type App struct {

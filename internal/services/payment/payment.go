@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	consts "tgssn/internal/model/messages"
-	"tgssn/pkg/errors"
-	"tgssn/pkg/logger"
+	consts "tgseller/internal/model/messages"
+	"tgseller/pkg/errors"
+	"tgseller/pkg/logger"
 	"time"
 
 	"go.uber.org/zap"

@@ -1,7 +1,7 @@
 package messages
 
 import (
-	types "tgssn/internal/model/bottypes"
+	types "tgseller/internal/model/bottypes"
 )
 
 // Команды стартовых действий.
@@ -13,15 +13,6 @@ var BtnStart = types.TgKbRowButtons{
 
 // Отказ от оплаты
 var BackToCtgBtn = types.TgInlineButton{DisplayName: "Back to categories", Value: "backToCtg"}
-
-// Кнопки с категориями
-var BtnCtgs = []types.TgRowButtons{
-	{
-		types.TgInlineButton{DisplayName: "💵 CR", Value: "CR"},
-		types.TgInlineButton{DisplayName: "📁 TU", Value: "TU"},
-		types.TgInlineButton{DisplayName: "📔 Ready Fulls", Value: "fullz"},
-	},
-}
 
 // Покупка/возвращение назад
 var BtnBuying = []types.TgRowButtons{
@@ -84,8 +75,8 @@ var (
 // Сообщение работнику в ЛС
 var BtnToWorker = []types.TgRowButtons{
 	{
-		types.TgInlineButton{DisplayName: "❌ Не найдено", Value: "badTicket"},
-		types.TgInlineButton{DisplayName: "✅ Найдено", Value: "goodTicket"},
+		types.TgInlineButton{DisplayName: "❌", Value: "badTicket"},
+		types.TgInlineButton{DisplayName: "✅", Value: "goodTicket"},
 	},
 }
 
@@ -108,20 +99,15 @@ var PaymentMethods = []string{"USDT", "TON", "GRAM", "NOT", "MY", "BTC", "LTC", 
 
 const (
 	OrdersInPage   = 3
-	WorkersChatID  = -1002171174434
-	TxtStart       = "Hello, %v 👋.This is a bot for Experian, Trans union and Background reports (cr, tu, bg)"
+	WorkersChatID  = 00000000000 // -- настроить
+	TxtStart       = "Hello, %v 👋.This is a simple test seller golang-bot"
 	TxtCtgs        = "📰 Choose a category that interests you:"
-	TxtBtnBuy      = "BUY FOR %v $ ❗️20%% SALE❗️"
-	TxtReports     = "📁 Category: %v reports\nDescription: %v\n"
+	TxtBtnBuy      = "buy for %v $"
+	TxtGoods       = "📁 Category: %v \nDescription: %v\n"
 	TxtPaymentDesc = `Please send the data in the format:
 %v
-After that, the payment will be processed, and the money will be debited from your account
-❗️ In case we are unable to find information based on your data, the money will be refunded ❗️`
-	TxtFullzDesc = `Fullz with ready experian in format
-name;address;city;state;zip;dob;dl;dl issue date;expiration date
-credit score 700+`
-	TxtFullzPaymentDesc    = "This product is sold only in bulk\nfor purchasing please contact us here:"
-	TxtWrongTicketFormat   = "❗️ You entered the data in the incorrect format, please use the template: Full name;address;city;state;ZIP;DOB;SSN ❗️"
+After that, the payment will be processed, and the money will be debited from your account`
+	TxtWrongTicketFormat   = "❗️ You entered the data in the incorrect format ❗️"
 	TxtTicketInProccess    = "Your order will be ready in approximately 5 minutes ✅"
 	TxtProfile             = "📰 ID: %v\n💎 Balance: %v$\n📊 Orders: %v"
 	TxtSup                 = "For assistance, please contact technical support: "
@@ -137,17 +123,17 @@ credit score 700+`
 	TxtPaymentNotEnough    = "You have insufficient funds in your account, please top up"
 	TxtError               = "Unexcepted error occured! Please contact support"
 	TxtBusyWorker          = "У тебя уже есть тикет, принимайся за новый, только когда закончишь со старым!"
-	TxtBadTicket           = "Тикет закрыт как bad, не расстраивайся ❤️\n (Если такое происходит подозрительно часто - пиши админу)"
-	TxtBadTicketUsr        = "Sorry! We are unable to find information based on your data in category %v, the money (%v$) will be refunded ❗️"
-	TxtSendFile            = "Отправь файл с репортом для закрытия тикета 😉"
-	TxtBadFile             = "Отправь именно файл, хватит тестировать систему на прочность! 💢💢💢"
-	TxtGoodTicket          = "Тикет закрыт как good, прекрасная работа! ❤️"
-	TxtErrorTicketUpd      = "Ой! Произошла ошибка при обновлении состояния тикета, срочно пишите администратору 😱!"
-	TxtForWorkers          = "❗️ Пришел тикет на %v репорт! ❗️"
-	TxtToWorker            = "Ты взял тикет на %v репорт! Партия гордится тобой!\nВот данные, которые прикрепил пользователь:\n%v"
+	TxtBadTicket           = "Тикет закрыт как bad"
+	TxtBadTicketUsr        = "Sorry! We are unable to sell u %v, the money (%v$) will be refunded ❗️"
+	TxtSendFile            = "Отправь файл, характерезиующий товар"
+	TxtBadFile             = "Отправь именно файл"
+	TxtGoodTicket          = "Тикет закрыт как good"
+	TxtErrorTicketUpd      = "Ой! Произошла ошибка при обновлении состояния тикета, напишите администратору"
+	TxtForWorkers          = "❗️ Пришел тикет на %v ! ❗️"
+	TxtToWorker            = "Ты взял тикет на %v репорт! \nВот данные, которые прикрепил пользователь:\n%v"
 	TxtOrderHistory        = "💡 Order № %v\n🕐 Date: %v\n📁 Category: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
 	TxtRefillsHistory      = "💡 Invoice № %v\n🕐 Date: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
-	TxtHelp                = "This is a bot for Experian and Trans union reports (cr,tu). Enter /start"
+	TxtHelp                = "This is a seller tg-bot. Enter /start"
 	TxtDashboard           = "Статистика на сегодня:\n%v"
 	TxtDashboardStats      = "Работник: %v\nЗаказы: %v ✅| %v ❌\n➖➖➖➖➖➖➖➖\n"
 )

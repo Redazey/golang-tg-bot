@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	types "tgssn/internal/model/bottypes"
-	"tgssn/pkg/cache"
-	"tgssn/pkg/errors"
-	"tgssn/pkg/logger"
+	types "tgseller/internal/model/bottypes"
+	"tgseller/pkg/cache"
+	"tgseller/pkg/errors"
+	"tgseller/pkg/logger"
 
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
@@ -72,7 +72,7 @@ func CallbacksCommands(s *Model, msg Message, paymentCtgs []string, paymentCtgsI
 
 				if lastInlinekbMsg == 0 {
 					lastMsgID, err := s.tgClient.ShowInlineButtons(
-						fmt.Sprintf(TxtReports, ctg.Name, ctg.Description),
+						fmt.Sprintf(TxtGoods, ctg.Name, ctg.Description),
 						BtnBuying,
 						msg.UserID,
 					)
@@ -86,7 +86,7 @@ func CallbacksCommands(s *Model, msg Message, paymentCtgs []string, paymentCtgsI
 				}
 
 				return true, s.tgClient.EditInlineButtons(
-					fmt.Sprintf(TxtReports, ctg.Name, ctg.Description),
+					fmt.Sprintf(TxtGoods, ctg.Name, ctg.Description),
 					lastInlinekbMsg,
 					msg.UserID,
 					BtnBuying,
@@ -99,10 +99,6 @@ func CallbacksCommands(s *Model, msg Message, paymentCtgs []string, paymentCtgsI
 			for _, ctg := range paymentCtgsInfo {
 				if msg.Text != "buy "+ctg.Short {
 					continue
-				}
-				if msg.Text == "buy Fullz" {
-					s.tgClient.DeleteInlineButtons(msg.UserID, lastInlinekbMsg, TxtFullzPaymentDesc)
-					return true, nil
 				}
 
 				if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "buy "+ctg.Short); err != nil {

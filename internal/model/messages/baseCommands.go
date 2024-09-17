@@ -2,8 +2,8 @@ package messages
 
 import (
 	"fmt"
-	types "tgssn/internal/model/bottypes"
-	"tgssn/pkg/cache"
+	types "tgseller/internal/model/bottypes"
+	"tgseller/pkg/cache"
 
 	"github.com/opentracing/opentracing-go"
 )

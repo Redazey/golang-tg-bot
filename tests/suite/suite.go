@@ -3,9 +3,9 @@ package suite
 import (
 	"context"
 	"testing"
-	"tgssn/config"
-	"tgssn/pkg/db"
-	"tgssn/pkg/logger"
+	"tgseller/config"
+	"tgseller/pkg/db"
+	"tgseller/pkg/logger"
 	"time"
 
 	"github.com/jmoiron/sqlx"

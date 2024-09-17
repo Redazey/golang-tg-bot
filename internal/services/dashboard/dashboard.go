@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"tgssn/config"
-	types "tgssn/internal/model/bottypes"
-	consts "tgssn/internal/model/messages"
-	"tgssn/pkg/cache"
-	"tgssn/pkg/logger"
+	"tgseller/config"
+	types "tgseller/internal/model/bottypes"
+	consts "tgseller/internal/model/messages"
+	"tgseller/pkg/cache"
+	"tgseller/pkg/logger"
 
 	"go.uber.org/zap"
 )
