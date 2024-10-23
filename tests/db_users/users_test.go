@@ -30,21 +30,4 @@ func TestUserStorage(t *testing.T) {
 		assert.NoError(t, err)
 		assert.True(t, exist)
 	})
-
-	var currLimit float64
-	t.Run("TestGetUserLimit", func(t *testing.T) {
-		limit, err := storage.GetUserLimit(ctx, 123456)
-		assert.NoError(t, err)
-		assert.IsType(t, currLimit, limit)
-		currLimit = limit
-	})
-
-	t.Run("TestAddUserLimit", func(t *testing.T) {
-		err := storage.AddUserLimit(ctx, 123456, 100)
-		assert.NoError(t, err)
-
-		limit, err := storage.GetUserLimit(ctx, 123456)
-		assert.NoError(t, err)
-		assert.Equal(t, float64(currLimit+100), limit)
-	})
 }

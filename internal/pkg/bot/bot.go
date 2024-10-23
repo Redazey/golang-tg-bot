@@ -6,7 +6,6 @@ import (
 	"tgseller/internal/clients/tg"
 	userStorage "tgseller/internal/model/db"
 	"tgseller/internal/model/messages"
-	"tgseller/internal/services/dashboard"
 	"tgseller/internal/services/payment"
 	"tgseller/pkg/cache"
 	"tgseller/pkg/db"
@@ -14,11 +13,10 @@ import (
 )
 
 type App struct {
-	tgClient  *tg.Client
-	storage   *userStorage.UserStorage
-	msgModel  *messages.Model
-	payment   *payment.Model
-	dashboard *dashboard.Model
+	tgClient *tg.Client
+	storage  *userStorage.UserStorage
+	msgModel *messages.Model
+	payment  *payment.Model
 }
 
 func Init() (*App, error) {
@@ -49,11 +47,9 @@ func Init() (*App, error) {
 	}
 
 	a.storage = userStorage.NewUserStorage(db.GetDBConn())
-	a.dashboard = dashboard.New(ctx, a.tgClient, a.storage, cfg)
 	a.payment = payment.New(ctx, a.storage, a.tgClient, cfg.PaymentToken)
 	a.msgModel = messages.New(ctx, a.tgClient, a.storage, a.payment, cfg)
 
-	a.dashboard.Init()
 	a.payment.Init()
 
 	return a, nil

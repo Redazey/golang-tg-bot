@@ -1,11 +1,4 @@
-INSERT INTO workers (tg_id, name, is_admin, status)
+INSERT INTO users (tg_id, access, accessed_at)
 VALUES 
-    (887126386, 'Reda', true, false);
-
-INSERT INTO usercategories (short_name, name, description, data_format, price)
-VALUES 
-    ('good1', 'good1', 'simple desc', 'user input', 5), 
-    ('good2', 'good2', 'simple desc', 'user input', 10), 
-    ('good3', 'good3', 'simple desc', 'user input', 15)
-
-
+    (887126386, true, '2024-10-23'),
+    (7271258031, false, '2024-10-23');

@@ -98,22 +98,12 @@ func CreateInlineButtons(DisplayName string, value string) []types.TgRowButtons 
 var PaymentMethods = []string{"USDT", "TON", "GRAM", "NOT", "MY", "BTC", "LTC", "ETH", "BNB", "TRX", "USDC"}
 
 const (
-	OrdersInPage   = 3
-	WorkersChatID  = 00000000000 // -- настроить
-	TxtStart       = "Hello, %v 👋.This is a simple test seller golang-bot"
-	TxtCtgs        = "📰 Choose a category that interests you:"
-	TxtBtnBuy      = "buy for %v $"
-	TxtGoods       = "📁 Category: %v \nDescription: %v\n"
-	TxtPaymentDesc = `Please send the data in the format:
-%v
-After that, the payment will be processed, and the money will be debited from your account`
-	TxtWrongTicketFormat   = "❗️ You entered the data in the incorrect format ❗️"
-	TxtTicketInProccess    = "Your order will be ready in approximately 5 minutes ✅"
-	TxtProfile             = "📰 ID: %v\n💎 Balance: %v$\n📊 Orders: %v"
+	TxtStart               = "Hello, %v 👋.This is a simple test seller golang-bot"
+	TxtCtgs                = "📰 Choose a category that interests you:"
+	TxtBtnBuy              = "buy for %v $"
+	TxtProfile             = "📰 ID: %v\n💎 Подписка: %v"
 	TxtSup                 = "For assistance, please contact technical support: "
 	TxtUnknownCommand      = "Unfortunately, this command is unknown to me. To get started, please enter /start."
-	TxtPaymentQuestion     = "Enter the amount you wish to add to your account: "
-	TxtPaymentNotInt       = "Please use only whole numbers and numbers that are above zero for input 😉"
 	TxtChoosePaymentMethod = "Choose a payment method:"
 	TxtRefillDesc          = "Top-up of %v $ via %v payment method"
 	TxtRefillReqCreated    = "Your top-up request was created!"
@@ -122,18 +112,5 @@ After that, the payment will be processed, and the money will be debited from yo
 	TxtPaymentErr          = "An error occurred while transferring funds! Please double-check your information or contact support"
 	TxtPaymentNotEnough    = "You have insufficient funds in your account, please top up"
 	TxtError               = "Unexcepted error occured! Please contact support"
-	TxtBusyWorker          = "У тебя уже есть тикет, принимайся за новый, только когда закончишь со старым!"
-	TxtBadTicket           = "Тикет закрыт как bad"
-	TxtBadTicketUsr        = "Sorry! We are unable to sell u %v, the money (%v$) will be refunded ❗️"
-	TxtSendFile            = "Отправь файл, характерезиующий товар"
-	TxtBadFile             = "Отправь именно файл"
-	TxtGoodTicket          = "Тикет закрыт как good"
-	TxtErrorTicketUpd      = "Ой! Произошла ошибка при обновлении состояния тикета, напишите администратору"
-	TxtForWorkers          = "❗️ Пришел тикет на %v ! ❗️"
-	TxtToWorker            = "Ты взял тикет на %v репорт! \nВот данные, которые прикрепил пользователь:\n%v"
-	TxtOrderHistory        = "💡 Order № %v\n🕐 Date: %v\n📁 Category: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
-	TxtRefillsHistory      = "💡 Invoice № %v\n🕐 Date: %v\n💰 Sum: %v $\n➖➖➖➖➖➖➖➖➖➖➖➖\n"
-	TxtHelp                = "This is a seller tg-bot. Enter /start"
-	TxtDashboard           = "Статистика на сегодня:\n%v"
-	TxtDashboardStats      = "Работник: %v\nЗаказы: %v ✅| %v ❌\n➖➖➖➖➖➖➖➖\n"
+	TxtHelp                = "Это бот для приваточки канала Blue Archive, пиши /start и гляди что у нас есть :3"
 )

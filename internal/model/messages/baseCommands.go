@@ -2,14 +2,13 @@ package messages
 
 import (
 	"fmt"
-	types "tgseller/internal/model/bottypes"
 	"tgseller/pkg/cache"
 
 	"github.com/opentracing/opentracing-go"
 )
 
 // Распознавание стандартных команд бота.
-func CheckBotCommands(s *Model, msg Message, paymentCtgs []string) (bool, error) {
+func CheckBotCommands(s *Model, msg Message) (bool, error) {
 	span, ctx := opentracing.StartSpanFromContext(s.ctx, "checkBotCommands")
 	s.ctx = ctx
 	defer span.Finish()
@@ -26,12 +25,7 @@ func CheckBotCommands(s *Model, msg Message, paymentCtgs []string) (bool, error)
 		}
 
 		return true, nil
-	case "Categories":
-		var btns []types.TgRowButtons
-		for _, ctg := range paymentCtgs {
-			btns = append(btns, types.TgRowButtons{types.TgInlineButton{DisplayName: ctg, Value: ctg}})
-		}
-
+	case "Подписаться ❤️":
 		lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, btns, msg.UserID)
 		if err != nil {
 			return true, err
@@ -47,18 +41,20 @@ func CheckBotCommands(s *Model, msg Message, paymentCtgs []string) (bool, error)
 			return true, err
 		}
 
-		balance, err := s.storage.GetUserLimit(ctx, msg.UserID)
+		access, err := s.storage.GetUserAccessStatus(ctx, msg.UserID)
 		if err != nil {
 			return true, err
 		}
 
-		orders, err := s.storage.CheckIfUserRecordsExist(ctx, msg.UserID)
-		if err != nil {
-			return true, err
+		var access_status string
+		if access {
+			access_status = "активна!"
+		} else {
+			access_status = "неактивна"
 		}
 
 		lastMsgID, err := s.tgClient.ShowInlineButtons(
-			fmt.Sprintf(TxtProfile, msg.UserID, balance, orders),
+			fmt.Sprintf(TxtProfile, msg.UserID, access_status),
 			BtnProfile,
 			msg.UserID,
 		)
