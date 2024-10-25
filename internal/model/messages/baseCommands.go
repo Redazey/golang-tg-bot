@@ -20,22 +20,40 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 			displayName = msg.UserName
 		}
 
-		if err := s.tgClient.ShowKeyboardButtons(fmt.Sprintf(TxtStart, displayName), BtnStart, msg.UserID); err != nil {
+		lastMsgID, err := s.tgClient.ShowKeyboardButtons(
+			fmt.Sprintf(TxtStart, displayName),
+			BtnStart,
+			msg.UserID,
+		)
+		if err != nil {
 			return true, err
 		}
-
-		return true, nil
-	case "Подписаться ❤️":
-		lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, btns, msg.UserID)
+		err = cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID)
 		if err != nil {
 			return true, err
 		}
 
-		if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
+		return true, s.tgClient.EditInlineButtons(
+			fmt.Sprintf(TxtStart, displayName),
+			lastMsgID,
+			msg.UserID,
+			BtnSubscribe,
+		)
+	case "Subscribe":
+		if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "buy"); err != nil {
+			return true, err
+		}
+		lastMsgID, err := s.tgClient.ShowInlineButtons(
+			TxtPaymentStart,
+			BtnSubscribe,
+			msg.UserID,
+		)
+		if err != nil {
 			return true, err
 		}
 
-		return true, nil
+		return true, cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID)
+
 	case "Profile":
 		if _, err := s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
 			return true, err
@@ -62,18 +80,7 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 			return true, err
 		}
 
-		if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
-			return true, err
-		}
-
-		return true, nil
-	case "Support":
-		s.tgClient.SendMessage(TxtSup, msg.UserID)
-		if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), 0); err != nil {
-			return true, err
-		}
-
-		return true, nil
+		return true, cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID)
 	case "/help":
 		if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), 0); err != nil {
 			return true, err

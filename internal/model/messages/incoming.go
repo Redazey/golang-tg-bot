@@ -64,7 +64,7 @@ type MessageSender interface {
 	SendMessage(text string, userID int64) (int, error)
 	ShowInlineButtons(text string, buttons []types.TgRowButtons, userID int64) (int, error)
 	EditInlineButtons(text string, msgID int, userID int64, buttons []types.TgRowButtons) error
-	ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) error
+	ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) (int, error)
 	DeleteInlineButtons(userID int64, msgID int, sourceText string) error
 	DeleteMsg(userID int64, msgID int)
 	ReplyMessage(FromUserID int64, ToUserID int64, msgID int) error
@@ -74,13 +74,13 @@ type MessageSender interface {
 type UserDataStorage interface {
 	// users
 	CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error)
-	AddUserLimit(ctx context.Context, userID int64, limits float64) error
 	GetUserAccessStatus(ctx context.Context, userID int64) (bool, error)
+	ChangeUserAccess(ctx context.Context, userID int64, Status bool) error
 
 	// refills
-	InsertUserRefillRecord(ctx context.Context, userID int64, invoiceID int64, amount float64) error
-	DeleteRefillRecord(ctx context.Context, invoiceID int64) error
-	ChangeRefillRecordStatus(ctx context.Context, status string, invoice_id int64) error
+	GetUserDataRecords(ctx context.Context) ([]types.Records, error)
+	DeleteUserRecord(ctx context.Context, invoiceID int64) error
+	ChangeRecordStatus(ctx context.Context, record_id int64, Status bool) error
 }
 
 type Payment interface {

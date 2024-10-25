@@ -20,7 +20,7 @@ services:
             - "6379:6379"
 
     bot:
-        container_name: tgssnbot
+        container_name: tgprivatebot
         build:
             target: dev
             network: host

@@ -34,7 +34,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 		switch msg.Text {
 		case "backToCtg":
 			if lastInlinekbMsg == 0 {
-				lastMsgID, err := s.tgClient.ShowInlineButtons(TxtCtgs, btns, msg.UserID)
+				lastMsgID, err := s.tgClient.ShowInlineButtons(TxtStart, BtnSubscribe, msg.UserID)
 				if err != nil {
 					return true, err
 				}
@@ -45,35 +45,10 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			}
 
 			return true, s.tgClient.EditInlineButtons(
-				TxtCtgs,
+				TxtStart,
 				lastInlinekbMsg,
 				msg.UserID,
-				btns,
-			)
-		case "buy":
-			if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "buy"); err != nil {
-				return true, err
-			}
-
-			if lastInlinekbMsg == 0 {
-				lastMsgID, err := s.tgClient.ShowInlineButtons(
-					TxtPaymentDesc,
-					[]types.TgRowButtons{{BackToCtgBtn}},
-					msg.UserID,
-				)
-				if err != nil {
-					return true, err
-				}
-
-				if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), lastMsgID); err != nil {
-					return true, err
-				}
-			}
-			return true, s.tgClient.EditInlineButtons(
-				fmt.Sprintf(TxtPaymentDesc),
-				lastInlinekbMsg,
-				msg.UserID,
-				[]types.TgRowButtons{{BackToCtgBtn}},
+				BtnSubscribe,
 			)
 		case "backToProfile":
 			if _, err = s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
@@ -113,13 +88,13 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				msg.UserID,
 				BtnProfile,
 			)
-		case "confirm_buy":
+		case "buy":
 			invoiceReq := CreateInvoiceRequest{
 				CurrencyType: "fiat",
-				Asset:        msg.Text,
+				Asset:        "USDT",
 				Fiat:         "USD",
-				Amount:       float64(amount),
-				Description:  fmt.Sprintf(TxtRefillDesc, amount, msg.Text),
+				Amount:       2,
+				Description:  fmt.Sprintf(TxtRefillDesc, 2),
 				Payload:      fmt.Sprintf("%v", msg.UserID),
 				Expires:      s.cfg.PaymentEX,
 			}
@@ -141,10 +116,6 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, err
 			}
 			BtnRefillRequest[0][0].URL = paymentState.BotInvoiceURL
-
-			if err = s.storage.InsertUserRefillRecord(ctx, msg.UserID, paymentState.InvoiceID, float64(amount)); err != nil {
-				return true, err
-			}
 
 			lastMsgID, err := s.tgClient.ShowInlineButtons(
 				TxtRefillReqCreated,
@@ -194,14 +165,14 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, err
 			}
 
-			if err = s.storage.DeleteRefillRecord(ctx, int64(paymentID)); err != nil {
+			if err = s.storage.DeleteUserRecord(ctx, int64(paymentID)); err != nil {
 				return true, err
 			}
 
 			if lastInlinekbMsg == 0 {
 				lastMsgID, err := s.tgClient.ShowInlineButtons(
 					TxtPaymentCanceled,
-					[]types.TgRowButtons{{BackToProfileBtn}},
+					[]types.TgRowButtons{{BackToCtgBtn}},
 					msg.UserID,
 				)
 				if err != nil {
@@ -216,7 +187,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				TxtPaymentCanceled,
 				lastInlinekbMsg,
 				msg.UserID,
-				[]types.TgRowButtons{{BackToProfileBtn}},
+				[]types.TgRowButtons{{BackToCtgBtn}},
 			)
 		}
 	}

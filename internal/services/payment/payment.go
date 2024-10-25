@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"tgseller/internal/model/bottypes"
 	consts "tgseller/internal/model/messages"
 	"tgseller/pkg/errors"
 	"tgseller/pkg/logger"
@@ -25,10 +26,11 @@ type MessageSender interface {
 
 // UserDataStorage Интерфейс для работы с хранилищем данных.
 type UserDataStorage interface {
-	AddUserLimit(ctx context.Context, userID int64, limits float64) error
-
-	ChangeRefillRecordStatus(ctx context.Context, status string, invoice_id int64) error
-	GetRefillRecords(ctx context.Context) ([]int, error)
+	GetUserAccessStatus(ctx context.Context, userID int64) (bool, error)
+	ChangeUserAccess(ctx context.Context, userID int64, Status bool) error
+	GetUserDataRecords(ctx context.Context) ([]bottypes.Records, error)
+	InsertUserDataRecord(ctx context.Context, userID int64, ctgInfo bottypes.Records) (bool, error)
+	ChangeRecordStatus(ctx context.Context, record_id int64, Status bool) error
 }
 
 // Model Модель платёжки
@@ -112,7 +114,7 @@ type DeleteInvoiceResponse struct {
 func (s *Model) Init() {
 	go func() {
 		for {
-			invoiceIDs, err := s.storage.GetRefillRecords(s.ctx)
+			invoiceIDs, err := s.storage.GetUserDataRecords(s.ctx)
 			if err != nil {
 				logger.Error("Ошибка", zap.Error(err))
 			}
@@ -152,30 +154,21 @@ func (s *Model) Init() {
 						logger.Info(fmt.Sprintf("Попытка превратить это в int %v", invoice.Payload))
 						logger.Error("Ошибка при конвертации типов данных", zap.Error(err))
 
-						if err = s.storage.ChangeRefillRecordStatus(s.ctx, "error", invoice.InvoiceID); err != nil {
+						if err = s.storage.ChangeRecordStatus(s.ctx, invoice.InvoiceID, false); err != nil {
 							logger.Error("failed to ChangeRefillRecordStatus", zap.Error(err))
 						}
 					}
 
-					intAmount, err := strconv.Atoi(invoice.Amount)
-					if err != nil {
-						logger.Info(fmt.Sprintf("Попытка превратить это в int %v", invoice.Amount))
-						logger.Error("Ошибка при конвертации типов данных", zap.Error(err))
-
-					}
-					logger.Info(fmt.Sprintf("%v - %v", userID, intAmount))
-
-					if _, err = s.tgClient.SendMessage(fmt.Sprintf(consts.TxtPaymentSuccsessful, invoice.Amount), int64(userID)); err != nil {
+					if err = s.storage.ChangeUserAccess(s.ctx, int64(userID), true); err != nil {
 						logger.Error("Failed to send message", zap.Error(err))
-
 					}
-					if err = s.storage.AddUserLimit(s.ctx, int64(userID), float64(intAmount)); err != nil {
+
+					if err = s.storage.ChangeRecordStatus(s.ctx, invoice.InvoiceID, true); err != nil {
 						logger.Error("Failed to send message", zap.Error(err))
-
 					}
 
-					if err = s.storage.ChangeRefillRecordStatus(s.ctx, "paid", invoice.InvoiceID); err != nil {
-						logger.Error("failed to ChangeRefillRecordStatus", zap.Error(err))
+					if _, err = s.tgClient.SendMessage(consts.TxtPaymentSuccsessful, int64(userID)); err != nil {
+						logger.Error("Failed to send message", zap.Error(err))
 					}
 
 					var result bool

@@ -116,7 +116,7 @@ func ProcessingMessages(tgUpdate tgbotapi.Update, c *Client, msgModel *messages.
 }
 
 // Их нажатие ожидает коллбек-ответ.
-func (c *Client) ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) error {
+func (c *Client) ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, userID int64) (int, error) {
 	buttns := make([]tgbotapi.KeyboardButton, 0, len(buttons))
 	for i := 0; i < len(buttons); i++ {
 		button := tgbotapi.NewKeyboardButton(buttons[i].Text)
@@ -135,13 +135,13 @@ func (c *Client) ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, 
 	msg := tgbotapi.NewMessage(userID, text)
 	msg.ReplyMarkup = keyboard
 
-	_, err := c.client.Send(msg)
+	sendedMsg, err := c.client.Send(msg)
 	if err != nil {
 		logger.Error("Ошибка отправки сообщения", zap.Error(err))
-		return errors.Wrap(err, "client.Send with inline-buttons")
+		return 0, errors.Wrap(err, "client.Send with inline-buttons")
 	}
 
-	return nil
+	return sendedMsg.MessageID, nil
 }
 
 func (c *Client) ShowInlineButtons(text string, buttons []types.TgRowButtons, userID int64) (int, error) {
@@ -168,6 +168,7 @@ func (c *Client) ShowInlineButtons(text string, buttons []types.TgRowButtons, us
 		logger.Error("Ошибка отправки сообщения", zap.Error(err))
 		return 0, errors.Wrap(err, "client.Send with inline-buttons")
 	}
+
 	return sendedMsg.MessageID, nil
 }
 

@@ -10,7 +10,7 @@ import (
 
 var Conn *gorm.DB
 
-func Init(DBUser string, DBPassword string, DBHost string, DBName string) error {
+func Init(DBUser string, DBPassword string, DBHost string, DBName string) (*gorm.DB, error) {
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", DBHost, DBUser, DBPassword, DBName)
 
 	var err error
@@ -20,7 +20,7 @@ func Init(DBUser string, DBPassword string, DBHost string, DBName string) error 
 		log.Fatalf("Database init error")
 	}
 
-	return nil
+	return Conn, nil
 }
 
 func GetDBConn() *gorm.DB {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"tgseller/config"
 	"tgseller/internal/clients/tg"
+	"tgseller/internal/model/bottypes"
 	userStorage "tgseller/internal/model/db"
 	"tgseller/internal/model/messages"
 	"tgseller/internal/services/payment"
@@ -31,10 +32,12 @@ func Init() (*App, error) {
 
 	logger.Init(cfg.LoggerLevel, "")
 
-	err = db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
+	db, err := db.Init(cfg.DB.DBUser, cfg.DB.DBPassword, cfg.DB.DBHost, cfg.DB.DBName)
 	if err != nil {
 		return nil, err
 	}
+
+	db.AutoMigrate(&bottypes.Users{}, &bottypes.Records{})
 
 	err = cache.Init(cfg.Redis.RedisAddr+":"+cfg.Redis.RedisPort, cfg.Redis.RedisPassword, 0, cfg.Cache.EXTime)
 	if err != nil {
@@ -46,7 +49,7 @@ func Init() (*App, error) {
 		return nil, err
 	}
 
-	a.storage = userStorage.NewUserStorage(db.GetDBConn())
+	a.storage = userStorage.NewUserStorage(db)
 	a.payment = payment.New(ctx, a.storage, a.tgClient, cfg.PaymentToken)
 	a.msgModel = messages.New(ctx, a.tgClient, a.storage, a.payment, cfg)
 
