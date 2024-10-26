@@ -3,19 +3,19 @@ version: '3.8'
 services:
     tgssnPg:
         image: postgres:latest
-        container_name: tgssnPG
+        container_name: tghentPG
         environment:
             - POSTGRES_USER=backend!
-            - POSTGRES_PASSWORD=backend1q!
-            - POSTGRES_DB=tgssnPG
+            - POSTGRES_PASSWORD=backend1q!Q
+            - POSTGRES_DB=tghentPG
         ports:
             - "5432:5432"
 
     tgssnRedis:
         image: redis
-        container_name: tgssnRedis
+        container_name: tghentRedis
         environment:
-            - REDIS_PASSWORD=backend!
+            - REDIS_PASSWORD=backend1q!Q
         ports:
             - "6379:6379"
 
