@@ -2,6 +2,7 @@ package messages
 
 import (
 	"fmt"
+	"tgseller/internal/model/bottypes"
 	"tgseller/pkg/cache"
 
 	"github.com/opentracing/opentracing-go"
@@ -15,13 +16,8 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 
 	switch msg.Text {
 	case "/start":
-		displayName := msg.UserDisplayName
-		if len(displayName) == 0 {
-			displayName = msg.UserName
-		}
-
 		lastMsgID, err := s.tgClient.ShowKeyboardButtons(
-			fmt.Sprintf(TxtStart, displayName),
+			TxtStart,
 			BtnStart,
 			msg.UserID,
 		)
@@ -34,18 +30,26 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 		}
 
 		return true, s.tgClient.EditInlineButtons(
-			fmt.Sprintf(TxtStart, displayName),
+			TxtStart,
 			lastMsgID,
 			msg.UserID,
-			BtnSubscribe,
+			[]bottypes.TgRowButtons{
+				{
+					BtnSubscribe,
+				},
+			},
 		)
-	case "Subscribe":
+	case "subscribe":
 		if err := cache.SaveCache(fmt.Sprintf("%v_command", msg.UserID), "buy"); err != nil {
 			return true, err
 		}
 		lastMsgID, err := s.tgClient.ShowInlineButtons(
 			TxtPaymentStart,
-			BtnSubscribe,
+			[]bottypes.TgRowButtons{
+				{
+					BtnSubscribe,
+				},
+			},
 			msg.UserID,
 		)
 		if err != nil {
@@ -66,7 +70,7 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 
 		var access_status string
 		if access {
-			access_status = "активна!"
+			access_status = "активна"
 		} else {
 			access_status = "неактивна"
 		}
@@ -87,6 +91,13 @@ func CheckBotCommands(s *Model, msg Message) (bool, error) {
 		}
 
 		_, err := s.tgClient.SendMessage(TxtHelp, msg.UserID)
+		return true, err
+	case "Support":
+		if err := cache.SaveCache(fmt.Sprintf("%v_inlinekbMsg", msg.UserID), 0); err != nil {
+			return true, err
+		}
+
+		_, err := s.tgClient.SendMessage(TxtSupport, msg.UserID)
 		return true, err
 	}
 

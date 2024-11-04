@@ -39,7 +39,7 @@ func New(tokenStr string, handlerProcessingFunc HandlerFunc) (*Client, error) {
 
 func (c *Client) SendMessage(text string, userID int64) (int, error) {
 	msg := tgbotapi.NewMessage(userID, text)
-	msg.ParseMode = "markdown"
+	msg.ParseMode = "MarkdownV2"
 
 	msgSended, err := c.client.Send(msg)
 	if err != nil {
@@ -47,6 +47,39 @@ func (c *Client) SendMessage(text string, userID int64) (int, error) {
 	}
 
 	return msgSended.MessageID, nil
+}
+
+func (c *Client) AcceptInvoice(userID int64, chatID int64) (int64, error) {
+	approveRequest := map[string]string{
+		"user_id": fmt.Sprint(userID),
+		"chat_id": fmt.Sprint(chatID),
+	}
+
+	if res, err := c.client.MakeRequest("approveChatJoinRequest", approveRequest); err != nil && !res.Ok {
+		logger.Debug(fmt.Sprint(res))
+		return 0, err
+	}
+
+	return userID, nil
+}
+
+func (c *Client) DeleteUser(userID int64, chatID int64) (int64, error) {
+	approveRequest := map[string]string{
+		"user_id": fmt.Sprint(userID),
+		"chat_id": fmt.Sprint(chatID),
+	}
+
+	if res, err := c.client.MakeRequest("banChatMember", approveRequest); err != nil && !res.Ok {
+		logger.Debug(string(res.Result))
+		return 0, err
+	}
+
+	if res, err := c.client.MakeRequest("unbanChatMember", approveRequest); err != nil && !res.Ok {
+		logger.Debug(string(res.Result))
+		return 0, err
+	}
+
+	return userID, nil
 }
 
 func (c *Client) ListenUpdates(msgModel *messages.Model) {
@@ -133,6 +166,7 @@ func (c *Client) ShowKeyboardButtons(text string, buttons types.TgKbRowButtons, 
 
 	// Настраиваем параметры сообщения
 	msg := tgbotapi.NewMessage(userID, text)
+	msg.ParseMode = "MarkdownV2"
 	msg.ReplyMarkup = keyboard
 
 	sendedMsg, err := c.client.Send(msg)
@@ -161,7 +195,7 @@ func (c *Client) ShowInlineButtons(text string, buttons []types.TgRowButtons, us
 	var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 	msg := tgbotapi.NewMessage(userID, text)
 	msg.ReplyMarkup = numericKeyboard
-	msg.ParseMode = "markdown"
+	msg.ParseMode = "MarkdownV2"
 
 	sendedMsg, err := c.client.Send(msg)
 	if err != nil {
@@ -184,7 +218,7 @@ func (c *Client) EditInlineButtons(text string, msgID int, userID int64, buttons
 	}
 	var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 	msg := tgbotapi.NewEditMessageTextAndMarkup(userID, msgID, text, numericKeyboard)
-	msg.ParseMode = "markdown"
+	msg.ParseMode = "MarkdownV2"
 
 	_, err := c.client.Send(msg)
 	if err != nil {

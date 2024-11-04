@@ -81,6 +81,7 @@ type UserDataStorage interface {
 	GetUserDataRecords(ctx context.Context) ([]types.Records, error)
 	DeleteUserRecord(ctx context.Context, invoiceID int64) error
 	ChangeRecordStatus(ctx context.Context, record_id int64, Status bool) error
+	InsertUserDataRecord(ctx context.Context, userID int64, ctgInfo types.Records) (bool, error)
 }
 
 type Payment interface {

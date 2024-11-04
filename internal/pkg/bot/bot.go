@@ -7,6 +7,7 @@ import (
 	"tgseller/internal/model/bottypes"
 	userStorage "tgseller/internal/model/db"
 	"tgseller/internal/model/messages"
+	invoiceaccepter "tgseller/internal/services/invoiceAccepter"
 	"tgseller/internal/services/payment"
 	"tgseller/pkg/cache"
 	"tgseller/pkg/db"
@@ -18,6 +19,7 @@ type App struct {
 	storage  *userStorage.UserStorage
 	msgModel *messages.Model
 	payment  *payment.Model
+	accepter *invoiceaccepter.Model
 }
 
 func Init() (*App, error) {
@@ -52,8 +54,10 @@ func Init() (*App, error) {
 	a.storage = userStorage.NewUserStorage(db)
 	a.payment = payment.New(ctx, a.storage, a.tgClient, cfg.PaymentToken)
 	a.msgModel = messages.New(ctx, a.tgClient, a.storage, a.payment, cfg)
+	a.accepter = invoiceaccepter.New(ctx, cfg, a.storage, a.tgClient)
 
 	a.payment.Init()
+	a.accepter.Init()
 
 	return a, nil
 }

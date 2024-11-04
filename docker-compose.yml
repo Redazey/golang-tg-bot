@@ -10,19 +10,31 @@ services:
             - POSTGRES_DB=tghentPG
         ports:
             - "5432:5432"
+        networks:
+            - tghentnet
 
     tgssnRedis:
         image: redis
         container_name: tghentRedis
         environment:
             - REDIS_PASSWORD=backend1q!Q
+            - auth-cache=6380
         ports:
             - "6379:6379"
+        networks:
+            - tghentnet
 
     bot:
         container_name: tgprivatebot
         build:
+            context: .
+            dockerfile: Dockerfile
             target: dev
-            network: host
         volumes:
             - .:/app
+        networks:
+            - tghentnet
+
+networks:
+    tghentnet:
+        driver: bridge

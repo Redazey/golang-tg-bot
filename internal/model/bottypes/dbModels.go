@@ -5,6 +5,7 @@ import "time"
 type Users struct {
 	ID          int64 `gorm:"primaryKey"`
 	Access      bool
+	Is_added    bool
 	Accessed_at time.Time
 }
 

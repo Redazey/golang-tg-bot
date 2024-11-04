@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"tgseller/internal/model/bottypes"
 	types "tgseller/internal/model/bottypes"
 	"tgseller/pkg/cache"
 	"tgseller/pkg/errors"
@@ -34,7 +35,13 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 		switch msg.Text {
 		case "backToCtg":
 			if lastInlinekbMsg == 0 {
-				lastMsgID, err := s.tgClient.ShowInlineButtons(TxtStart, BtnSubscribe, msg.UserID)
+				lastMsgID, err := s.tgClient.ShowInlineButtons(
+					TxtStart,
+					[]bottypes.TgRowButtons{
+						{
+							BtnSubscribe,
+						},
+					}, msg.UserID)
 				if err != nil {
 					return true, err
 				}
@@ -48,7 +55,11 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				TxtStart,
 				lastInlinekbMsg,
 				msg.UserID,
-				BtnSubscribe,
+				[]bottypes.TgRowButtons{
+					{
+						BtnSubscribe,
+					},
+				},
 			)
 		case "backToProfile":
 			if _, err = s.storage.CheckIfUserExistAndAdd(ctx, msg.UserID); err != nil {
@@ -93,7 +104,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				CurrencyType: "fiat",
 				Asset:        "USDT",
 				Fiat:         "USD",
-				Amount:       2,
+				Amount:       constAmount,
 				Description:  fmt.Sprintf(TxtRefillDesc, 2),
 				Payload:      fmt.Sprintf("%v", msg.UserID),
 				Expires:      s.cfg.PaymentEX,
@@ -115,6 +126,17 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			if err := cache.SaveCache(fmt.Sprintf("%v_paymentID", msg.UserID), paymentState.InvoiceID); err != nil {
 				return true, err
 			}
+
+			record := types.Records{
+				ID:      paymentState.InvoiceID,
+				User_id: msg.UserID,
+				Amount:  constAmount,
+			}
+
+			if succeed, err := s.storage.InsertUserDataRecord(ctx, msg.UserID, record); err != nil || !succeed {
+				return true, err
+			}
+
 			BtnRefillRequest[0][0].URL = paymentState.BotInvoiceURL
 
 			lastMsgID, err := s.tgClient.ShowInlineButtons(

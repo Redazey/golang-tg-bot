@@ -26,7 +26,7 @@ func NewUserStorage(db *gorm.DB) *UserStorage {
 
 // InsertUser Добавление пользователя в базу данных.
 func (storage *UserStorage) InsertUser(ctx context.Context, userID int64) error {
-	tx := storage.db.Create(&bottypes.Users{ID: userID})
+	tx := storage.db.Create(&bottypes.Users{ID: userID, Access: false, Is_added: false})
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -46,6 +46,31 @@ func (storage *UserStorage) GetUserAccessStatus(ctx context.Context, user_id int
 	return user.Access, nil
 }
 
+// Поиск юзеров, которые получили доступ к каналу, но еще не состоят в нем
+func (storage *UserStorage) GetAccessedUsers(ctx context.Context) ([]bottypes.Users, error) {
+	var users []bottypes.Users
+	tx := storage.db.Where("Access = ?", true).Where("Is_added = ?", false).Select("ID").Find(&users)
+
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return users, nil
+}
+
+func (storage *UserStorage) GetUnAccessedUsers(ctx context.Context) ([]bottypes.Users, error) {
+	var users []bottypes.Users
+
+	oneMonthAgo := time.Now().AddDate(0, -1, 0)
+
+	tx := storage.db.Where("Access = ?", true).Where("Is_added = ?", true).Where("Accessed_at < ?", oneMonthAgo).Select("ID").Find(&users)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return users, nil
+}
+
 // InsertUser Добавление пользователя в базу данных.
 func (storage *UserStorage) ChangeUserAccess(ctx context.Context, user_id int64, Status bool) error {
 	tx := storage.db.Model(&bottypes.Users{}).Where("ID = ?", user_id).Update("Access", Status)
@@ -54,7 +79,18 @@ func (storage *UserStorage) ChangeUserAccess(ctx context.Context, user_id int64,
 		return tx.Error
 	}
 
-	tx = storage.db.Update("Accessed_at", time.Now())
+	tx = storage.db.Model(&bottypes.Users{}).Where("ID = ?", user_id).Update("Accessed_at", time.Now())
+	if tx.Error != nil {
+		tx.Rollback()
+		return tx.Error
+	}
+
+	return nil
+}
+
+// ChangeIsAddedStatus Установка статуса вступления в чат
+func (storage *UserStorage) ChangeIsAddedStatus(ctx context.Context, user_id int64, Status bool) error {
+	tx := storage.db.Model(&bottypes.Users{}).Where("ID = ?", user_id).Update("Is_added", Status)
 	if tx.Error != nil {
 		tx.Rollback()
 		return tx.Error
@@ -68,11 +104,13 @@ func (storage *UserStorage) ChangeUserAccess(ctx context.Context, user_id int64,
 func (storage *UserStorage) CheckIfUserExist(ctx context.Context, userID int64) (bool, error) {
 	var user bottypes.Users
 	tx := storage.db.First(&user, userID)
-
 	switch tx.Error {
-	case nil:
-		return false, tx.Error
 	case gorm.ErrRecordNotFound:
+		return false, nil
+	}
+
+	switch user {
+	case bottypes.Users{}:
 		return false, nil
 	default:
 		return true, nil
@@ -96,7 +134,7 @@ func (storage *UserStorage) CheckIfUserExistAndAdd(ctx context.Context, userID i
 	return true, nil
 }
 
-// InsertUserDataRecord Добавление записи о расходах пользователя (в транзакции с проверкой превышения лимита).
+// InsertUserDataRecord Добавление записи о расходах пользователя
 func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int64, ctgInfo bottypes.Records) (bool, error) {
 	// Проверка существования пользователя в БД.
 	_, err := storage.CheckIfUserExistAndAdd(ctx, userID)
@@ -104,19 +142,18 @@ func (storage *UserStorage) InsertUserDataRecord(ctx context.Context, userID int
 		return false, err
 	}
 
-	tx := storage.db.Create(ctgInfo)
+	tx := storage.db.Create(&ctgInfo)
 	if tx.Error != nil {
 		tx.Rollback()
 		return false, tx.Error
 	}
 
-	return true, err
+	return true, nil
 }
 
-// InsertUserDataRecord Добавление записи о расходах пользователя (в транзакции с проверкой превышения лимита).
 func (storage *UserStorage) GetUserDataRecords(ctx context.Context) ([]bottypes.Records, error) {
 	var records []bottypes.Records
-	tx := storage.db.Limit(1).Find(&records)
+	tx := storage.db.Where("status = ?", false).Find(&records)
 	if tx.Error != nil {
 		tx.Rollback()
 		return nil, tx.Error
@@ -127,13 +164,7 @@ func (storage *UserStorage) GetUserDataRecords(ctx context.Context) ([]bottypes.
 
 // InsertUser Добавление пользователя в базу данных.
 func (storage *UserStorage) ChangeRecordStatus(ctx context.Context, record_id int64, Status bool) error {
-	tx := storage.db.Model(&bottypes.Records{}).Where("ID = ?", record_id).Update("Access", Status)
-	if tx.Error != nil {
-		tx.Rollback()
-		return tx.Error
-	}
-
-	tx = storage.db.Update("Accessed_at", time.Now())
+	tx := storage.db.Model(&bottypes.Records{}).Where("ID = ?", record_id).Update("status", Status)
 	if tx.Error != nil {
 		tx.Rollback()
 		return tx.Error
@@ -144,13 +175,8 @@ func (storage *UserStorage) ChangeRecordStatus(ctx context.Context, record_id in
 
 // InsertUser Добавление пользователя в базу данных.
 func (storage *UserStorage) DeleteUserRecord(ctx context.Context, record_id int64) error {
-	tx := storage.db.Delete(&bottypes.Records{}, record_id)
-	if tx.Error != nil {
-		tx.Rollback()
-		return tx.Error
-	}
-
-	tx = storage.db.Update("Accessed_at", time.Now())
+	var record bottypes.Records
+	tx := storage.db.Delete(&record, record_id)
 	if tx.Error != nil {
 		tx.Rollback()
 		return tx.Error

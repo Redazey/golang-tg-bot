@@ -10,14 +10,15 @@ import (
 
 // Файл переменных окружения
 type Enviroment struct {
-	LoggerLevel  string `env:"loggerMode" envDefault:"debug"`
-	TgToken      string `env:"TG_TOKEN,required"`
-	Dashboard    int    `env:"DASHBOARD" envDefault:"60"`
-	PaymentToken string `env:"PAYMENT_TOKEN,required"`
-	PaymentEX    int    `env:"PAYMENT_EX_TIME" envDefault:"3600"`
-	DB           DB
-	Redis        Redis
-	Cache        Cache
+	LoggerLevel   string `env:"loggerMode" envDefault:"debug"`
+	TgToken       string `env:"TG_TOKEN,required"`
+	Dashboard     int    `env:"DASHBOARD" envDefault:"60"`
+	PaymentToken  string `env:"PAYMENT_TOKEN,required"`
+	PaymentEX     int    `env:"PAYMENT_EX_TIME" envDefault:"3600"`
+	PrivateChatID int64  `env:"PRIVATE_CHAT_ID,required"`
+	DB            DB
+	Redis         Redis
+	Cache         Cache
 }
 
 type DB struct {
@@ -41,27 +42,6 @@ type Cache struct {
 
 var enviroment Enviroment
 
-/*
-Структура env файла
-
-	-------GENERAL------
-	LoggerLevel string
-	TgToken     string
-	Dashboard
-	---------DB---------
-	DBUser        string
-	DBPassword    string
-	DBName        string
-	DBHost        string
-	-------REDIS--------
-	RedisAddr     string
-	RedisPort     string
-	RedisPassword string
-	RedisDBid     int
-	-------CACHE--------
-	CacheInterval string
-	CacheEXTime   int
-*/
 func NewEnv(envPath ...string) (*Enviroment, error) {
 	err := godotenv.Load(envPath...)
 	if err != nil {

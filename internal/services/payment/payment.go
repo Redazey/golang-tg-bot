@@ -22,6 +22,7 @@ import (
 // MessageSender Интерфейс для работы с сообщениями.
 type MessageSender interface {
 	SendMessage(text string, userID int64) (int, error)
+	ShowInlineButtons(text string, buttons []bottypes.TgRowButtons, userID int64) (int, error)
 }
 
 // UserDataStorage Интерфейс для работы с хранилищем данных.
@@ -120,8 +121,9 @@ func (s *Model) Init() {
 			}
 
 			for i, invoiceID := range invoiceIDs {
+				logger.Debug(fmt.Sprint(invoiceID.ID))
 				body, err := s.CryptoPayRequest(s.ctx, "getInvoices", GetInvoicesRequest{
-					InvoiceIDs: fmt.Sprintf("%v", invoiceID),
+					InvoiceIDs: fmt.Sprintf("%v", invoiceID.ID),
 					Status:     "paid",
 				})
 				if err != nil {
@@ -167,7 +169,7 @@ func (s *Model) Init() {
 						logger.Error("Failed to send message", zap.Error(err))
 					}
 
-					if _, err = s.tgClient.SendMessage(consts.TxtPaymentSuccsessful, int64(userID)); err != nil {
+					if _, err = s.tgClient.ShowInlineButtons(consts.TxtPaymentSuccsessful, consts.BtnSucceed, int64(userID)); err != nil {
 						logger.Error("Failed to send message", zap.Error(err))
 					}
 
