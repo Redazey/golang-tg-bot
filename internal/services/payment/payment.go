@@ -120,10 +120,9 @@ func (s *Model) Init() {
 				logger.Error("Ошибка", zap.Error(err))
 			}
 
-			for i, invoiceID := range invoiceIDs {
-				logger.Debug(fmt.Sprint(invoiceID.ID))
+			for _, invoiceID := range invoiceIDs {
 				body, err := s.CryptoPayRequest(s.ctx, "getInvoices", GetInvoicesRequest{
-					InvoiceIDs: fmt.Sprintf("%v", invoiceID.ID),
+					InvoiceIDs: fmt.Sprint(invoiceID.ID),
 					Status:     "paid",
 				})
 				if err != nil {
@@ -132,57 +131,50 @@ func (s *Model) Init() {
 				}
 
 				var invoices = map[string][]Invoice{}
-
 				if err := json.Unmarshal(body, &invoices); err != nil {
 					logger.Error("ОШибка", zap.Error(err))
-					time.Sleep(time.Second * 10)
+					continue
+				}
+				logger.Debug(fmt.Sprint(invoices))
+				if len(invoices["items"]) == 0 {
+					continue
+				}
+
+				invoice := invoices["items"][0]
+
+				logger.Debug(fmt.Sprint(invoice))
+
+				userID, err := strconv.Atoi(invoice.Payload)
+				if err != nil {
+					logger.Info(fmt.Sprintf("Попытка превратить это в int %v", invoice.Payload))
+					logger.Error("Ошибка при конвертации типов данных", zap.Error(err))
+
+					if err = s.storage.ChangeRecordStatus(s.ctx, invoice.InvoiceID, false); err != nil {
+						logger.Error("failed to ChangeRefillRecordStatus", zap.Error(err))
+					}
+				}
+
+				if err = s.storage.ChangeUserAccess(s.ctx, int64(userID), true); err != nil {
+					logger.Error("Failed to send message", zap.Error(err))
+				}
+
+				if err = s.storage.ChangeRecordStatus(s.ctx, invoice.InvoiceID, true); err != nil {
+					logger.Error("Failed to send message", zap.Error(err))
+				}
+
+				if _, err = s.tgClient.ShowInlineButtons(consts.TxtPaymentSuccsessful, consts.BtnSucceed, int64(userID)); err != nil {
+					logger.Error("Failed to send message", zap.Error(err))
+				}
+
+				var result bool
+				if err = json.Unmarshal(body, &result); err != nil {
+					logger.Debug("Error while unmarshaling message")
 
 					continue
 				}
 
-				var invoice Invoice
-
-				if len(invoices["items"]) > i {
-					invoice = invoices["items"][i]
-				} else {
-					time.Sleep(time.Second * 10)
-
-					continue
-				}
-
-				if invoice.Status == "paid" {
-					userID, err := strconv.Atoi(invoice.Payload)
-					if err != nil {
-						logger.Info(fmt.Sprintf("Попытка превратить это в int %v", invoice.Payload))
-						logger.Error("Ошибка при конвертации типов данных", zap.Error(err))
-
-						if err = s.storage.ChangeRecordStatus(s.ctx, invoice.InvoiceID, false); err != nil {
-							logger.Error("failed to ChangeRefillRecordStatus", zap.Error(err))
-						}
-					}
-
-					if err = s.storage.ChangeUserAccess(s.ctx, int64(userID), true); err != nil {
-						logger.Error("Failed to send message", zap.Error(err))
-					}
-
-					if err = s.storage.ChangeRecordStatus(s.ctx, invoice.InvoiceID, true); err != nil {
-						logger.Error("Failed to send message", zap.Error(err))
-					}
-
-					if _, err = s.tgClient.ShowInlineButtons(consts.TxtPaymentSuccsessful, consts.BtnSucceed, int64(userID)); err != nil {
-						logger.Error("Failed to send message", zap.Error(err))
-					}
-
-					var result bool
-					if err = json.Unmarshal(body, &result); err != nil {
-						logger.Debug("Error while unmarshaling message")
-
-						continue
-					}
-
-					if !result {
-						logger.Info("Failed to delete invoice")
-					}
+				if !result {
+					logger.Info("Failed to delete invoice")
 				}
 			}
 
@@ -200,7 +192,7 @@ func (s *Model) CryptoPayRequest(ctx context.Context, method string, request any
 	headers := map[string]string{
 		"Content-Type":         "application/json",
 		"Crypto-Pay-API-Token": s.apiSecret,
-		"Crypto-Pay-API-Nonce": fmt.Sprintf("%d", 1643723900), // Unix timestamp
+		"Crypto-Pay-API-Nonce": fmt.Sprintf("%d", time.Now().Unix()),
 		"Crypto-Pay-API-Sign":  GenerateSignature(s.apiSecret, "POST", url, request),
 	}
 

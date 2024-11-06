@@ -59,6 +59,10 @@ func (m *Model) CheckPendingRequests() {
 		return
 	}
 
+	if users == nil {
+		return
+	}
+
 	for _, user := range users {
 		_, err := m.tgClient.AcceptInvoice(user.ID, m.cfg.PrivateChatID)
 		if err != nil {

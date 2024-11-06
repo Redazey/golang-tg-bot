@@ -56,7 +56,6 @@ func (c *Client) AcceptInvoice(userID int64, chatID int64) (int64, error) {
 	}
 
 	if res, err := c.client.MakeRequest("approveChatJoinRequest", approveRequest); err != nil && !res.Ok {
-		logger.Debug(fmt.Sprint(res))
 		return 0, err
 	}
 
