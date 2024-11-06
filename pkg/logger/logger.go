@@ -19,7 +19,7 @@ func Init(loggerLevel string, logsPath string) {
 	fileEncoder := zapcore.NewJSONEncoder(config)
 	consoleEncoder := zapcore.NewConsoleEncoder(config)
 	if logsPath == "" {
-		logsPath = "logs/golog"
+		logsPath = "golog"
 	}
 	logFile, err := os.OpenFile(logsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {

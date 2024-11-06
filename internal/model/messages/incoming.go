@@ -2,6 +2,7 @@ package messages
 
 import (
 	"context"
+	"time"
 
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/zap"
@@ -76,6 +77,7 @@ type UserDataStorage interface {
 	CheckIfUserExistAndAdd(ctx context.Context, userID int64) (bool, error)
 	GetUserAccessStatus(ctx context.Context, userID int64) (bool, error)
 	ChangeUserAccess(ctx context.Context, userID int64, Status bool) error
+	GetUserAccessData(ctx context.Context, user_id int64) (time.Time, error)
 
 	// refills
 	GetUserDataRecords(ctx context.Context) ([]types.Records, error)

@@ -75,7 +75,7 @@ const (
 	TxtSupport             = "Для решения *технических* вопросов обращайтесь сюда @ForeyDaxel"
 	TxtCtgs                = "📰 Choose a category that interests you:"
 	TxtBtnBuy              = "buy for %v $"
-	TxtProfile             = "📰 ID: %v\n💎 Подписка: %v"
+	TxtProfile             = "📰 ID: %v\n💎 Подписка: %v\nПодписан до: %v"
 	TxtUnknownCommand      = "Unfortunately, this command is unknown to me. To get started, please enter /start."
 	TxtChoosePaymentMethod = "Choose a payment method:"
 	TxtRefillDesc          = "Покупка подписки на сумму %v$"

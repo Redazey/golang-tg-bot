@@ -58,6 +58,17 @@ func (storage *UserStorage) GetAccessedUsers(ctx context.Context) ([]bottypes.Us
 	return users, nil
 }
 
+func (storage *UserStorage) GetUserAccessData(ctx context.Context, user_id int64) (time.Time, error) {
+	var users bottypes.Users
+	tx := storage.db.Where("ID = ?", user_id).Select("Accessed_at").First(&users)
+
+	if tx.Error != nil {
+		return time.Now(), tx.Error
+	}
+
+	return users.Accessed_at.AddDate(0, 1, 0), nil
+}
+
 func (storage *UserStorage) GetUnAccessedUsers(ctx context.Context) ([]bottypes.Users, error) {
 	var users []bottypes.Users
 
@@ -73,6 +84,24 @@ func (storage *UserStorage) GetUnAccessedUsers(ctx context.Context) ([]bottypes.
 
 // InsertUser Добавление пользователя в базу данных.
 func (storage *UserStorage) ChangeUserAccess(ctx context.Context, user_id int64, Status bool) error {
+	if Status {
+		access, err := storage.GetUserAccessStatus(ctx, user_id)
+		if err != nil {
+			return err
+		}
+
+		if access {
+			tx := storage.db.Model(&bottypes.Users{}).
+				Where("ID = ?", user_id).
+				Update("Accessed_at", gorm.Expr("Accessed_at + INTERVAL '1 month'"))
+			if tx.Error != nil {
+				tx.Rollback()
+				return tx.Error
+			}
+			return nil
+		}
+	}
+
 	tx := storage.db.Model(&bottypes.Users{}).Where("ID = ?", user_id).Update("Access", Status)
 	if tx.Error != nil {
 		tx.Rollback()

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"tgseller/internal/model/bottypes"
 	types "tgseller/internal/model/bottypes"
 	"tgseller/pkg/cache"
 	"tgseller/pkg/errors"
@@ -37,7 +36,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			if lastInlinekbMsg == 0 {
 				lastMsgID, err := s.tgClient.ShowInlineButtons(
 					TxtStart,
-					[]bottypes.TgRowButtons{
+					[]types.TgRowButtons{
 						{
 							BtnSubscribe,
 						},
@@ -55,7 +54,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				TxtStart,
 				lastInlinekbMsg,
 				msg.UserID,
-				[]bottypes.TgRowButtons{
+				[]types.TgRowButtons{
 					{
 						BtnSubscribe,
 					},
@@ -71,16 +70,23 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 				return true, err
 			}
 
+			var accessed_at string
 			var access_status string
 			if access {
-				access_status = "активна!"
+				access_status = "активна"
+				accessed_at_time, err := s.storage.GetUserAccessData(s.ctx, msg.UserID)
+				accessed_at = accessed_at_time.Format("2006 02 January")
+				if err != nil {
+					return true, err
+				}
 			} else {
 				access_status = "неактивна"
+				accessed_at = "\\-"
 			}
 
 			if lastInlinekbMsg == 0 {
 				lastMsgID, err := s.tgClient.ShowInlineButtons(
-					fmt.Sprintf(TxtProfile, msg.UserID, access_status),
+					fmt.Sprintf(TxtProfile, msg.UserID, access_status, accessed_at),
 					BtnProfile,
 					msg.UserID,
 				)
@@ -94,7 +100,7 @@ func CallbacksCommands(s *Model, msg Message) (bool, error) {
 			}
 
 			return true, s.tgClient.EditInlineButtons(
-				fmt.Sprintf(TxtProfile, msg.UserID, access_status),
+				fmt.Sprintf(TxtProfile, msg.UserID, access_status, accessed_at),
 				lastInlinekbMsg,
 				msg.UserID,
 				BtnProfile,
